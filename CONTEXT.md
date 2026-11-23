@@ -1,9 +1,10 @@
 # Testimonial Hub - System Context & Operational Architecture
 
-> **Document Version:** 1.0.0  
-> **Last Updated:** November 2026  
+> **Document Version:** 1.1.0  
+> **Last Updated:** November 23, 2026, 23:47  
 > **Status:** Production-Ready / Pushed to Google Apps Script & GitHub  
 > **Repository:** `https://github.com/NelvirJAN/AgyTestimonial.git` (`main`)  
+> **Latest Git Commit:** `9fea54e` (*"Add CONTEXT.md covering architecture, data models, and system status"*)  
 > **Apps Script ID:** `19wXYaiigS78Ce6b5xVLyGf4Dm-9PL0V3yGvaCM8K6Zroc9fDpUZGWg66`
 
 ---
@@ -12,12 +13,13 @@
 
 **Testimonial Hub** is a self-contained, automated social proof collection, moderation, and delivery web application built entirely within Google Workspace technologies (**Google Apps Script**, **Google Sheets**, **Google Drive**), augmented with **Google Gemini AI** and **Google Chat**.
 
-### Core Problem Solved:
+### Core Problems Solved:
 1. **Manual Collection Friction:** Eliminates back-and-forth emails requesting customer reviews, headshots, and permissions.
-2. **Heavy Payload & Storage Bloat:** Avoids large image uploads bloat and Google Apps Script execution timeout limits by compressing headshots client-side via HTML5 `<canvas>` before transmission.
+2. **Heavy Payload & Storage Bloat:** Avoids large image upload bloat and Google Apps Script execution timeout limits by compressing headshots client-side via HTML5 `<canvas>` before transmission.
 3. **Manual Quote Extraction:** Leverages the Gemini API to automatically distill long user feedback into punchy, 1-sentence marketing highlights and categorize praise into dynamic topic tags.
 4. **Data Privacy Risk:** Protects customer data by strictly ensuring submitter email addresses are accessible only in the protected admin dashboard and completely omitted from public Wall of Love endpoints and client-rendered HTML.
 5. **Frictionless Moderation & Display:** Empowers the workspace owner to approve or edit AI quotes in one click and immediately stream updates to responsive, embeddable Wall of Love galleries.
+6. **Session & Architecture Continuity:** Enforces persistent session context tracking via [`CONTEXT.md`](file:///c:/AntiGravity/AgyTestimonials/CONTEXT.md) and the dedicated [`save-progress`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/save-progress/SKILL.md) skill.
 
 ---
 
@@ -38,6 +40,8 @@ The project is fully built, tested, pushed to Google Apps Script via Clasp, and 
 | [`.claspignore`](file:///c:/AntiGravity/AgyTestimonials/.claspignore) | Config | Tooling | Whitelists only deployable Apps Script files (`appsscript.json`, `Code.js`, `*.html`). |
 | [`README.md`](file:///c:/AntiGravity/AgyTestimonials/README.md) | Docs | ~180 lines | Comprehensive non-technical setup guide covering Drive, Gemini API, Google Chat, and deployment steps. |
 | [`Spec.md`](file:///c:/AntiGravity/AgyTestimonials/Spec.md) | Docs | 58 lines | Original business logic and architectural constraints reference specification. |
+| [`.agents/skills/save-progress/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/save-progress/SKILL.md) | Agent Customization | ~70 lines | Standard Antigravity agent discovery route for the `/saveProgress` skill. Instructs agents to review session history and update `CONTEXT.md`. |
+| [`skills/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/skills/SKILL.md) | Agent Customization | ~70 lines | Root discovery route mirror for the `/saveProgress` skill. |
 
 ---
 
@@ -162,6 +166,8 @@ PropertiesService.getScriptProperties()
    - All dynamic strings rendered in the DOM are sanitized via `escapeHtml()`.
 5. **Secret Isolation:**
    - Secrets are stored exclusively in server-side `PropertiesService`, preventing accidental exposure in client-facing HTML or repository code.
+6. **Platform Boundary Management:**
+   - Google Apps Script Cloud IDE rejects `.md` files via the Apps Script API (only `.js`, `.gs`, `.html`, and `appsscript.json` are permitted). All markdown documentation (`README.md`, `CONTEXT.md`, `Spec.md`) is maintained in Git version control.
 
 ---
 
@@ -184,8 +190,10 @@ PropertiesService.getScriptProperties()
 
 ---
 
-## 8. Maintenance & Extension Opportunities
+## 8. Maintenance & Next Steps
 
-- **Custom Themes:** The Wall of Love iframe can accept additional URL parameters (e.g., `?page=wall&theme=dark` or `&accent=indigo`) to dynamically style the widget.
-- **Video Testimonials:** Future enhancement can support Google Drive video uploads or Loom embed links.
-- **Automated Digest:** A weekly time-driven Apps Script trigger (`ScriptApp.newTrigger`) could send an email summary of newly approved testimonials.
+1. **Commit Customizations:** Commit the newly created [`.agents/skills/save-progress/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/save-progress/SKILL.md) and [`skills/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/skills/SKILL.md) to GitHub.
+2. **Cloud Project Verification:** Run `initSetup()` in Google Apps Script and verify that `DRIVE_FOLDER_ID` and `GEMINI_API_KEY` are operational.
+3. **Future Extensibility:**
+   - Custom URL parameters on the Wall (e.g. `?page=wall&theme=dark`).
+   - Video testimonial support (Drive video uploads or Loom embeds).
