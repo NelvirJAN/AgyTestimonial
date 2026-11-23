@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Share Your Feedback | Testimonial Hub</title>
+  
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'surface': '#f8f9ff',
+            'on-surface': '#0b1c30',
+            'surface-variant': '#d3e4fe',
+            'on-surface-variant': '#464555',
+            'surface-container-lowest': '#ffffff',
+            'surface-container-low': '#eff4ff',
+            'surface-container': '#e5eeff',
+            'surface-container-high': '#dce9ff',
+            'surface-container-highest': '#d3e4fe',
+            'primary': '#3525cd',
+            'primary-container': '#4f46e5',
+            'on-primary': '#ffffff',
+            'on-primary-container': '#dad7ff',
+            'secondary': '#855300',
+            'secondary-container': '#fea619',
+            'on-secondary': '#ffffff',
+            'tertiary': '#005338',
+            'tertiary-container': '#006e4b',
+            'tertiary-fixed': '#6ffbbe',
+            'on-tertiary-fixed': '#002113',
+            'error': '#ba1a1a',
+            'outline': '#777587',
+            'outline-variant': '#c7c4d8'
+          },
+          fontFamily: {
+            'headline': ['Plus Jakarta Sans', 'sans-serif'],
+            'body': ['Inter', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  
+  <style>
+    @layer base {
+      html, body {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background-color: #f8f9ff;
+        font-family: 'Inter', sans-serif;
+      }
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+    .star-filled {
+      font-variation-settings: 'FILL' 1 !important;
+    }
+  </style>
+</head>
+
+<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen">
+
+  <!-- Desktop Top Navigation Bar -->
+  <header class="sticky top-0 w-full z-40 bg-surface/90 backdrop-blur-xl border-b border-surface-container-high/60 transition-colors">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 h-18 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-8">
+        <a class="flex items-center gap-3 group focus:outline-none" href="?page=form">
+          <div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-md shadow-primary/20">
+            <span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+          </div>
+          <span class="font-headline text-xl text-on-surface tracking-tight font-bold">Testimonial Hub</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-6">
+          <a class="text-sm text-primary font-semibold flex items-center gap-1.5 transition-colors" href="?page=form">
+            <span class="material-symbols-outlined text-[18px]">rate_review</span>
+            Submit Praise
+          </a>
+          <a class="text-sm text-on-surface-variant hover:text-on-surface font-medium flex items-center gap-1.5 transition-colors" href="?page=wall">
+            <span class="material-symbols-outlined text-[18px]">favorite</span>
+            Wall of Love
+          </a>
+          <a class="text-sm text-on-surface-variant hover:text-on-surface font-medium flex items-center gap-1.5 transition-colors" href="?page=admin">
+            <span class="material-symbols-outlined text-[18px]">dashboard</span>
+            Admin Dashboard
+          </a>
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full border border-surface-container-highest/60">
+          <span class="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
+          <span class="text-[11px] text-on-surface font-semibold uppercase tracking-wider">Live Collector</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="flex-1 w-full bg-gradient-to-b from-surface via-surface-container-low/40 to-surface py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: Context, Guidelines & Wall Preview -->
+      <div class="lg:col-span-4 flex flex-col space-y-6 lg:sticky lg:top-24">
+        <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sm flex flex-col space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full text-primary w-fit">
+            <span class="material-symbols-outlined text-[16px] star-filled">auto_awesome</span>
+            <span class="text-[11px] font-semibold tracking-wide uppercase">Community Spotlight</span>
+          </div>
+          <h2 class="font-headline text-xl text-on-surface font-bold tracking-tight">Your Feedback Shapes the Future</h2>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            Sharing your real-world experience helps fellow creators and builders make better decisions, while motivating our core team.
+          </p>
+
+          <!-- Submission Tips -->
+          <div class="pt-3 border-t border-surface-container space-y-3">
+            <span class="text-xs text-on-surface font-semibold uppercase tracking-wider">Tips for a great review:</span>
+            <ul class="space-y-2 text-xs text-on-surface-variant">
+              <li class="flex items-start gap-2">
+                <span class="material-symbols-outlined text-tertiary text-[18px] shrink-0 mt-0.5">check_circle</span>
+                <span>Mention concrete metrics or time saved (e.g. +38% conversions).</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="material-symbols-outlined text-tertiary text-[18px] shrink-0 mt-0.5">check_circle</span>
+                <span>Highlight your favorite breakthrough or workflow benefit.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="material-symbols-outlined text-tertiary text-[18px] shrink-0 mt-0.5">check_circle</span>
+                <span>Attach a profile photo so community members recognize you.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Live Wall Preview Card -->
+        <div class="bg-gradient-to-br from-surface-container-low to-surface-container-high/40 border border-outline-variant/30 rounded-2xl p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">How it will look</span>
+            <span class="px-2 py-0.5 rounded text-[11px] bg-tertiary-fixed text-on-tertiary-fixed font-semibold">Live Preview</span>
+          </div>
+
+          <div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline-variant/20 space-y-2.5">
+            <div class="flex items-center gap-1 text-secondary-container" id="liveAsideStars">
+              <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+              <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+              <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+              <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+              <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+            </div>
+
+            <p class="text-sm text-on-surface italic leading-relaxed line-clamp-3" id="liveAsideQuote">
+              "Testimonial Hub made it effortless to collect real user proof and showcase it proudly. Highly recommended!"
+            </p>
+
+            <div class="flex items-center gap-2.5 pt-2 border-t border-surface-container">
+              <img alt="Preview Avatar" class="w-8 h-8 rounded-full object-cover ring-1 ring-primary/20 bg-surface-container" id="liveAsideAvatar" src="https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg">
+              <div class="flex flex-col">
+                <span class="text-xs font-semibold text-on-surface leading-tight" id="liveAsideName">Your Name</span>
+                <span class="text-[11px] text-on-surface-variant" id="liveAsideCompany">Your Organization</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Submission Form -->
+      <div class="lg:col-span-8 flex flex-col space-y-4">
+        
+        <!-- Error Alert Banner -->
+        <div id="errorBanner" class="hidden p-4 rounded-xl bg-error/10 border border-error/30 text-error flex items-start gap-3">
+          <span class="material-symbols-outlined text-[20px] shrink-0 mt-0.5">error</span>
+          <div class="flex-1 text-sm font-medium" id="errorMessage">Something went wrong. Please check your inputs.</div>
+          <button type="button" onclick="document.getElementById('errorBanner').classList.add('hidden')" class="text-error hover:opacity-75">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+
+        <!-- Form Card -->
+        <div class="w-full bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-lg p-6 sm:p-10 relative overflow-hidden transition-all duration-300" id="testimonialFormCard">
+          
+          <!-- Background Glow Accents -->
+          <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <!-- Header -->
+          <div class="flex flex-col space-y-1.5 pb-6 border-b border-surface-container relative z-10">
+            <div class="flex items-center justify-between">
+              <h1 class="font-headline text-2xl sm:text-3xl text-on-surface font-extrabold tracking-tight">Share Your Story</h1>
+              <span class="hidden sm:inline-flex items-center gap-1 px-3 py-1 bg-surface-container-low rounded-full text-on-surface-variant text-xs">
+                <span class="material-symbols-outlined text-[14px]">lock</span>
+                Verified Submission
+              </span>
+            </div>
+            <p class="text-sm sm:text-base text-on-surface-variant">
+              Your review helps others discover our work and directly supports future improvements.
+            </p>
+          </div>
+
+          <!-- Star Rating Selector -->
+          <div class="my-6 p-5 sm:p-6 bg-surface-container-low rounded-xl border border-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex flex-col items-center sm:items-start text-center sm:text-left">
+              <span class="font-headline text-base text-on-surface font-semibold">How was your overall experience?</span>
+              <span class="text-xs text-on-surface-variant">Click a star to rate your journey</span>
+            </div>
+
+            <div class="flex flex-col items-center sm:items-end gap-1.5">
+              <div aria-label="Rating out of 5 stars" class="flex items-center gap-2 select-none" id="starContainer" role="radiogroup">
+                <button aria-label="1 Star" class="star-btn transition-transform hover:scale-125 focus:outline-none" data-value="1" type="button">
+                  <span class="material-symbols-outlined text-[32px] sm:text-[36px] text-secondary-container cursor-pointer star-filled">star</span>
+                </button>
+                <button aria-label="2 Stars" class="star-btn transition-transform hover:scale-125 focus:outline-none" data-value="2" type="button">
+                  <span class="material-symbols-outlined text-[32px] sm:text-[36px] text-secondary-container cursor-pointer star-filled">star</span>
+                </button>
+                <button aria-label="3 Stars" class="star-btn transition-transform hover:scale-125 focus:outline-none" data-value="3" type="button">
+                  <span class="material-symbols-outlined text-[32px] sm:text-[36px] text-secondary-container cursor-pointer star-filled">star</span>
+                </button>
+                <button aria-label="4 Stars" class="star-btn transition-transform hover:scale-125 focus:outline-none" data-value="4" type="button">
+                  <span class="material-symbols-outlined text-[32px] sm:text-[36px] text-secondary-container cursor-pointer star-filled">star</span>
+                </button>
+                <button aria-label="5 Stars" class="star-btn transition-transform hover:scale-125 focus:outline-none" data-value="5" type="button">
+                  <span class="material-symbols-outlined text-[32px] sm:text-[36px] text-secondary-container cursor-pointer star-filled">star</span>
+                </button>
+              </div>
+              <span class="text-sm text-secondary font-bold tracking-tight" id="ratingStatusText">Outstanding! (5/5)</span>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <form class="flex flex-col space-y-6" id="praiseForm" onsubmit="event.preventDefault(); handleFormSubmit();">
+            
+            <!-- Testimonial Text Area -->
+            <div class="flex flex-col space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-sm text-on-surface font-semibold flex items-center gap-1" for="testimonialQuote">
+                  Your Testimonial <span class="text-error">*</span>
+                </label>
+                <span class="text-xs text-on-surface-variant font-medium" id="charCounter">0 / 600 characters</span>
+              </div>
+              <div class="relative rounded-xl bg-surface-container-low p-0.5 focus-within:ring-2 focus-within:ring-primary transition-all border border-outline-variant/40 shadow-inner">
+                <textarea 
+                  class="w-full bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant text-sm rounded-[10px] p-4 outline-none resize-none min-h-[130px] border-none focus:ring-0 leading-relaxed" 
+                  id="testimonialQuote" 
+                  maxlength="600" 
+                  placeholder="What results did you achieve? What did you appreciate most about your experience?" 
+                  required 
+                  rows="4"></textarea>
+              </div>
+            </div>
+
+            <!-- Two-column row: Name and Company -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <!-- Full Name Field -->
+              <div class="flex flex-col space-y-1.5">
+                <label class="text-sm text-on-surface font-semibold" for="fullName">
+                  Full Name <span class="text-error">*</span>
+                </label>
+                <div class="rounded-lg bg-surface-container-low p-0.5 focus-within:ring-2 focus-within:ring-primary transition-all border border-outline-variant/40 shadow-sm">
+                  <input 
+                    class="w-full h-11 bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant text-sm rounded-[6px] px-3.5 outline-none border-none focus:ring-0" 
+                    id="fullName" 
+                    placeholder="e.g. Elena Rostova" 
+                    required 
+                    type="text">
+                </div>
+              </div>
+
+              <!-- Company / Organization Field -->
+              <div class="flex flex-col space-y-1.5">
+                <label class="text-sm text-on-surface font-semibold flex items-center justify-between" for="companyTitle">
+                  <span>Organization & Title</span>
+                  <span class="text-xs text-on-surface-variant font-normal">Optional</span>
+                </label>
+                <div class="rounded-lg bg-surface-container-low p-0.5 focus-within:ring-2 focus-within:ring-primary transition-all border border-outline-variant/40 shadow-sm">
+                  <input 
+                    class="w-full h-11 bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant text-sm rounded-[6px] px-3.5 outline-none border-none focus:ring-0" 
+                    id="companyTitle" 
+                    placeholder="e.g. Acme Studio, Product Lead" 
+                    type="text">
+                </div>
+              </div>
+            </div>
+
+            <!-- Email Input with Privacy Note -->
+            <div class="flex flex-col space-y-1.5">
+              <label class="text-sm text-on-surface font-semibold" for="emailAddr">
+                Email Address <span class="text-error">*</span>
+              </label>
+              <div class="rounded-lg bg-surface-container-low p-0.5 focus-within:ring-2 focus-within:ring-primary transition-all border border-outline-variant/40 shadow-sm">
+                <input 
+                  class="w-full h-11 bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant text-sm rounded-[6px] px-3.5 outline-none border-none focus:ring-0" 
+                  id="emailAddr" 
+                  placeholder="name@example.com" 
+                  required 
+                  type="email">
+              </div>
+              <div class="flex items-center gap-1.5 pt-1 px-1 text-on-surface-variant">
+                <span class="material-symbols-outlined text-[16px] text-tertiary">lock</span>
+                <span class="text-xs">Strictly private. Never displayed on the public Wall of Love.</span>
+              </div>
+            </div>
+
+            <!-- Drag-and-drop Circular Headshot Upload Zone with Client-Side Canvas Compression -->
+            <input type="file" id="headshotFileInput" accept="image/jpeg,image/png,image/webp" class="hidden">
+            
+            <div 
+              class="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-xl bg-surface-container-low border border-dashed border-outline-variant/60 hover:border-primary/60 transition-colors cursor-pointer"
+              id="uploadDropZone"
+              onclick="document.getElementById('headshotFileInput').click()">
+              
+              <div class="relative group shrink-0">
+                <div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center overflow-hidden shadow-inner ring-4 ring-surface-container-lowest">
+                  <img 
+                    alt="Uploaded headshot preview" 
+                    class="w-full h-full object-cover transition-transform group-hover:scale-105" 
+                    id="avatarImg" 
+                    src="https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg">
+                </div>
+                <button 
+                  class="absolute bottom-0 right-0 w-7 h-7 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-md hover:bg-primary-container transition-all" 
+                  type="button" 
+                  title="Upload headshot">
+                  <span class="material-symbols-outlined text-[16px]">photo_camera</span>
+                </button>
+              </div>
+
+              <div class="flex flex-col items-center sm:items-start text-center sm:text-left space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm text-on-surface font-semibold">Your Profile Photo</span>
+                  <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant font-medium">Recommended</span>
+                </div>
+                <span class="text-xs text-on-surface-variant" id="uploadStatusText">
+                  Click or drag and drop your photo here. Automatically resized client-side to ensure fast loading.
+                </span>
+              </div>
+            </div>
+
+            <!-- Consent Toggle -->
+            <label class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/30 cursor-pointer hover:bg-surface-container transition-colors">
+              <input checked required class="mt-0.5 h-4 w-4 rounded text-primary focus:ring-primary border-outline-variant" id="consentCheckbox" type="checkbox">
+              <span class="text-xs text-on-surface leading-normal">
+                I give Testimonial Hub permission to highlight this testimonial across marketing channels and public customer stories.
+              </span>
+            </label>
+
+            <!-- Submit Button Row -->
+            <div class="pt-2">
+              <button 
+                class="w-full min-h-[50px] bg-primary text-on-primary rounded-xl font-headline font-semibold flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:bg-primary-container active:scale-[0.99] transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed" 
+                id="submitBtn" 
+                type="submit">
+                <span class="material-symbols-outlined text-[20px]" id="submitIcon">send</span>
+                <span id="submitBtnText">Submit Testimonial</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Thank You Confirmation View (Hidden initially, replaces form on success) -->
+        <div class="hidden w-full bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-xl p-8 sm:p-12 flex flex-col items-center text-center space-y-6 relative overflow-hidden transition-all" id="thankYouModal">
+          
+          <!-- Confetti Accent Illustration -->
+          <div class="w-full h-32 bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low rounded-xl relative flex items-center justify-center overflow-hidden border border-outline-variant/20">
+            <div class="w-16 h-16 bg-tertiary text-on-tertiary rounded-full flex items-center justify-center shadow-lg relative z-10 ring-4 ring-surface-container-lowest">
+              <span class="material-symbols-outlined text-[36px]">check</span>
+            </div>
+          </div>
+
+          <!-- Thank You Text -->
+          <div class="flex flex-col space-y-2 items-center max-w-md">
+            <div class="flex items-center gap-1.5 px-3 py-1 bg-surface-container rounded-full text-tertiary">
+              <span class="material-symbols-outlined text-[16px] star-filled">verified</span>
+              <span class="text-[11px] font-semibold uppercase tracking-wider">Testimonial Received</span>
+            </div>
+            <h2 class="font-headline text-2xl sm:text-3xl text-on-surface font-bold" id="thankYouHeading">Thank You!</h2>
+            <p class="text-sm text-on-surface-variant leading-relaxed">
+              Your feedback is deeply appreciated. Once reviewed by our team, it will appear on our Wall of Love!
+            </p>
+          </div>
+
+          <!-- Preview Snippet -->
+          <div class="w-full max-w-lg bg-surface-container-low rounded-xl p-5 text-left flex flex-col space-y-3 border border-outline-variant/30">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1 text-secondary-container" id="thankYouStars">
+                <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+                <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+                <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+                <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+                <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+              </div>
+              <span class="text-xs text-on-surface-variant font-medium">Just now</span>
+            </div>
+            <p class="text-sm text-on-surface italic leading-relaxed" id="previewSnippetText"></p>
+            <div class="flex items-center gap-3 pt-2 border-t border-surface-container">
+              <img alt="Submitted avatar" class="w-8 h-8 rounded-full object-cover bg-surface-variant" id="thankYouAvatar" src="https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg">
+              <div class="flex flex-col">
+                <span class="text-sm font-semibold text-on-surface" id="thankYouName">Your Name</span>
+                <span class="text-xs text-on-surface-variant" id="thankYouCompany">Your Organization</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md pt-2">
+            <a href="?page=wall" class="w-full sm:flex-1 py-3 px-5 bg-primary text-on-primary rounded-xl font-headline text-sm font-semibold flex items-center justify-center gap-2 shadow-md hover:bg-primary-container transition-all">
+              <span class="material-symbols-outlined text-[18px]">favorite</span>
+              View Wall of Love
+            </a>
+            <button class="w-full sm:w-auto py-3 px-5 text-sm text-on-surface-variant hover:text-on-surface font-medium hover:underline transition-all" id="resetFormBtn" type="button">
+              Submit another
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full bg-surface-container-lowest border-t border-outline-variant/30 py-6 px-6 lg:px-8 mt-auto">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-on-surface-variant">
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-tertiary">security</span>
+          <span>Google Drive Cloud Storage</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+          <span>Gemini AI Curated</span>
+        </div>
+      </div>
+      <div>
+        <span>&copy; Testimonial Hub. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    (function () {
+      let currentRating = 5;
+      let compressedBase64 = '';
+      let compressedMimeType = '';
+
+      const starButtons = document.querySelectorAll('.star-btn');
+      const ratingStatusText = document.getElementById('ratingStatusText');
+      const liveAsideStars = document.getElementById('liveAsideStars');
+      const labels = [
+        'Needs Improvement (1/5)',
+        'Fair Experience (2/5)',
+        'Good & Useful (3/5)',
+        'Very Impressive! (4/5)',
+        'Outstanding! (5/5)'
+      ];
+
+      function updateRating(rating) {
+        currentRating = rating;
+        starButtons.forEach((btn, idx) => {
+          const icon = btn.querySelector('.material-symbols-outlined');
+          if (idx < rating) {
+            icon.classList.add('star-filled', 'text-secondary-container');
+            icon.classList.remove('text-outline-variant');
+          } else {
+            icon.classList.remove('star-filled', 'text-secondary-container');
+            icon.classList.add('text-outline-variant');
+          }
+        });
+
+        if (ratingStatusText) {
+          ratingStatusText.textContent = labels[rating - 1] || 'Select Rating';
+        }
+
+        if (liveAsideStars) {
+          let starHtml = '';
+          for (let i = 1; i <= 5; i++) {
+            const filled = i <= rating ? 'star-filled text-secondary-container' : 'text-outline-variant';
+            starHtml += `<span class="material-symbols-outlined text-[18px] ${filled}">star</span>`;
+          }
+          liveAsideStars.innerHTML = starHtml;
+        }
+      }
+
+      starButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = parseInt(btn.getAttribute('data-value'), 10);
+          updateRating(val);
+        });
+      });
+
+      // Live Aside Mirroring
+      const quoteInput = document.getElementById('testimonialQuote');
+      const charCounter = document.getElementById('charCounter');
+      const liveAsideQuote = document.getElementById('liveAsideQuote');
+
+      if (quoteInput) {
+        quoteInput.addEventListener('input', () => {
+          const len = quoteInput.value.length;
+          if (charCounter) charCounter.textContent = `${len} / 600 characters`;
+          if (liveAsideQuote) {
+            liveAsideQuote.textContent = quoteInput.value.trim() 
+              ? `"${quoteInput.value.trim()}"` 
+              : '"Testimonial Hub made it effortless to collect real user proof and showcase it proudly. Highly recommended!"';
+          }
+        });
+      }
+
+      const nameInput = document.getElementById('fullName');
+      const liveAsideName = document.getElementById('liveAsideName');
+      if (nameInput && liveAsideName) {
+        nameInput.addEventListener('input', () => {
+          liveAsideName.textContent = nameInput.value.trim() || 'Your Name';
+        });
+      }
+
+      const companyInput = document.getElementById('companyTitle');
+      const liveAsideCompany = document.getElementById('liveAsideCompany');
+      if (companyInput && liveAsideCompany) {
+        companyInput.addEventListener('input', () => {
+          liveAsideCompany.textContent = companyInput.value.trim() || 'Your Organization';
+        });
+      }
+
+      // Client-Side Image Resizing & Compression via HTML5 Canvas
+      const fileInput = document.getElementById('headshotFileInput');
+      const avatarImg = document.getElementById('avatarImg');
+      const liveAsideAvatar = document.getElementById('liveAsideAvatar');
+      const uploadStatusText = document.getElementById('uploadStatusText');
+
+      function processImageFile(file) {
+        if (!file || !file.type.startsWith('image/')) {
+          showError('Please select a valid image file (JPEG, PNG, or WebP).');
+          return;
+        }
+
+        uploadStatusText.textContent = 'Optimizing image...';
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = new Image();
+          img.onload = function () {
+            // Resize to max 400x400 maintaining aspect ratio with square cropping
+            const maxDim = 400;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = maxDim;
+            canvas.height = maxDim;
+
+            const minSide = Math.min(img.width, img.height);
+            const startX = (img.width - minSide) / 2;
+            const startY = (img.height - minSide) / 2;
+
+            // Draw center cropped square
+            ctx.drawImage(img, startX, startY, minSide, minSide, 0, 0, maxDim, maxDim);
+
+            // Compress to JPEG 85% quality
+            compressedMimeType = 'image/jpeg';
+            compressedBase64 = canvas.toDataURL(compressedMimeType, 0.85);
+
+            // Update UI Previews
+            avatarImg.src = compressedBase64;
+            if (liveAsideAvatar) liveAsideAvatar.src = compressedBase64;
+            uploadStatusText.textContent = 'Photo ready! Click or drag to change.';
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files[0]) {
+            processImageFile(e.target.files[0]);
+          }
+        });
+      }
+
+      // Drag and drop support
+      const dropZone = document.getElementById('uploadDropZone');
+      if (dropZone) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-primary');
+          }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-primary');
+          }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+          if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+            processImageFile(e.dataTransfer.files[0]);
+          }
+        });
+      }
+
+      // Submission Handling
+      window.handleFormSubmit = function () {
+        const name = nameInput.value.trim();
+        const email = document.getElementById('emailAddr').value.trim();
+        const organization = companyInput.value.trim();
+        const testimonial = quoteInput.value.trim();
+
+        if (!name || !email || !testimonial) {
+          showError('Please fill in all required fields.');
+          return;
+        }
+
+        setSubmittingState(true);
+
+        const payload = {
+          name: name,
+          email: email,
+          organization: organization,
+          rating: currentRating,
+          testimonial: testimonial,
+          headshotBase64: compressedBase64,
+          headshotMimeType: compressedMimeType
+        };
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+          google.script.run
+            .withSuccessHandler(onSubmissionSuccess)
+            .withFailureHandler(onSubmissionFailure)
+            .submitTestimonial(payload);
+        } else {
+          // Local/development mock fallback
+          setTimeout(() => {
+            onSubmissionSuccess({ success: true, id: 'TEST-MOCK-123' });
+          }, 1200);
+        }
+      };
+
+      function onSubmissionSuccess(result) {
+        setSubmittingState(false);
+        if (result && result.success) {
+          const formCard = document.getElementById('testimonialFormCard');
+          const thankYouModal = document.getElementById('thankYouModal');
+
+          document.getElementById('thankYouHeading').textContent = `Thank You, ${nameInput.value.trim()}!`;
+          document.getElementById('previewSnippetText').textContent = `"${quoteInput.value.trim()}"`;
+          document.getElementById('thankYouName').textContent = nameInput.value.trim();
+          document.getElementById('thankYouCompany').textContent = companyInput.value.trim() || 'Customer';
+          if (compressedBase64) {
+            document.getElementById('thankYouAvatar').src = compressedBase64;
+          }
+
+          // Build stars in thank you card
+          const thankYouStars = document.getElementById('thankYouStars');
+          if (thankYouStars) {
+            let starHtml = '';
+            for (let i = 1; i <= 5; i++) {
+              const filled = i <= currentRating ? 'star-filled text-secondary-container' : 'text-outline-variant';
+              starHtml += `<span class="material-symbols-outlined text-[18px] ${filled}">star</span>`;
+            }
+            thankYouStars.innerHTML = starHtml;
+          }
+
+          formCard.classList.add('hidden');
+          thankYouModal.classList.remove('hidden');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          showError(result.error || 'Submission could not be completed.');
+        }
+      }
+
+      function onSubmissionFailure(error) {
+        setSubmittingState(false);
+        showError(error.message || error.toString() || 'A server error occurred. Please try again.');
+      }
+
+      function setSubmittingState(isSubmitting) {
+        const btn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('submitBtnText');
+        const icon = document.getElementById('submitIcon');
+
+        if (isSubmitting) {
+          btn.disabled = true;
+          btnText.textContent = 'Submitting & Analyzing...';
+          icon.textContent = 'progress_activity';
+          icon.classList.add('animate-spin');
+        } else {
+          btn.disabled = false;
+          btnText.textContent = 'Submit Testimonial';
+          icon.textContent = 'send';
+          icon.classList.remove('animate-spin');
+        }
+      }
+
+      function showError(msg) {
+        const banner = document.getElementById('errorBanner');
+        const text = document.getElementById('errorMessage');
+        text.textContent = msg;
+        banner.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Reset Button Handler
+      const resetBtn = document.getElementById('resetFormBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          document.getElementById('praiseForm').reset();
+          compressedBase64 = '';
+          compressedMimeType = '';
+          avatarImg.src = 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg';
+          if (liveAsideAvatar) {
+            liveAsideAvatar.src = 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg';
+          }
+          updateRating(5);
+          if (charCounter) charCounter.textContent = '0 / 600 characters';
+          if (liveAsideQuote) {
+            liveAsideQuote.textContent = '"Testimonial Hub made it effortless to collect real user proof and showcase it proudly. Highly recommended!"';
+          }
+          if (liveAsideName) liveAsideName.textContent = 'Your Name';
+          if (liveAsideCompany) liveAsideCompany.textContent = 'Your Organization';
+
+          document.getElementById('thankYouModal').classList.add('hidden');
+          document.getElementById('testimonialFormCard').classList.remove('hidden');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
