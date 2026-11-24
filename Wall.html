@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <base target="_top">
-  <title>Wall of Love | Customer Stories & Feedback</title>
+  <title>Wall of Love | Testimonial Hub</title>
 
   <!-- Google Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,38 +25,14 @@
       theme: {
         extend: {
           colors: {
-            "surface": "#f8f9ff",
-            "on-surface": "#0b1c30",
-            "surface-variant": "#d3e4fe",
-            "on-surface-variant": "#464555",
-            "surface-container-lowest": "#ffffff",
-            "surface-container-low": "#eff4ff",
-            "surface-container": "#e5eeff",
-            "surface-container-high": "#dce9ff",
-            "surface-container-highest": "#d3e4fe",
-            "primary": "#3525cd",
-            "primary-container": "#4f46e5",
-            "on-primary": "#ffffff",
-            "on-primary-container": "#dad7ff",
-            "secondary": "#855300",
-            "secondary-container": "#fea619",
-            "secondary-fixed": "#ffddb8",
-            "on-secondary-fixed-variant": "#653e00",
-            "on-secondary": "#ffffff",
-            "tertiary": "#005338",
-            "tertiary-container": "#006e4b",
-            "tertiary-fixed": "#6ffbbe",
-            "on-tertiary-fixed": "#002113",
-            "error": "#ba1a1a",
-            "error-container": "#ffdad6",
-            "outline": "#777587",
-            "outline-variant": "#c7c4d8",
-            "inverse-surface": "#213145",
-            "inverse-on-surface": "#eaf1ff"
+            primary: "#1d4ed8",
+            "primary-hover": "#1e40af",
+            surface: "#f8fafc",
+            "card-bg": "#ffffff"
           },
           fontFamily: {
-            "headline": ["Plus Jakarta Sans", "sans-serif"],
-            "body": ["Inter", "sans-serif"]
+            headline: ["Plus Jakarta Sans", "sans-serif"],
+            body: ["Inter", "sans-serif"]
           }
         }
       }
@@ -64,14 +40,10 @@
   </script>
 
   <style>
-    @layer base {
-
-      html,
-      body {
-        background-color: #f8f9ff;
-        color: #0b1c30;
-        font-family: 'Inter', sans-serif;
-      }
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-family: 'Inter', sans-serif;
     }
 
     .material-symbols-outlined {
@@ -82,489 +54,274 @@
     .star-filled {
       font-variation-settings: 'FILL' 1 !important;
     }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
 
-<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen">
+<body class="bg-surface text-slate-900 antialiased flex flex-col min-h-screen">
 
-  <!-- Desktop Top Navigation Bar -->
-  <header
-    class="sticky top-0 w-full z-40 bg-surface/90 backdrop-blur-md border-b border-surface-container-high transition-shadow">
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 h-18 py-3.5 flex items-center justify-between">
-      <div class="flex items-center gap-6">
-        <a class="flex items-center gap-3 group"
-          href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=wall' : '?page=wall' ?>"
-          target="_top">
-          <div
-            class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-md shadow-primary/20">
-            <span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+  <?
+    // Server-Side Data Extraction (Ben Collins Architecture)
+    const items = (typeof testimonials !== 'undefined' && testimonials) ? testimonials : [];
+    
+    // Compute topic tags and counts directly on the server
+    const tagCounts = {};
+    for (let i = 0; i < items.length; i++) {
+      const itemTags = items[i].tags || [];
+      for (let j = 0; j < itemTags.length; j++) {
+        const t = String(itemTags[j]).trim();
+        if (t) {
+          tagCounts[t] = (tagCounts[t] || 0) + 1;
+        }
+      }
+    }
+    const tagNames = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a]);
+    const baseHref = (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl : '';
+    const formUrl = baseHref ? (baseHref + '?page=form') : '?page=form';
+    const adminUrl = baseHref ? (baseHref + '?page=admin') : '?page=admin';
+    const wallUrl = baseHref ? (baseHref + '?page=wall') : '?page=wall';
+  ?>
+
+  <!-- Top Navigation Bar -->
+  <header class="w-full bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a class="flex items-center gap-2.5 font-headline font-bold text-lg text-slate-900" href="<?= wallUrl ?>" target="_top">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm font-black shadow-sm">
+            99
           </div>
-          <span class="font-headline text-xl text-on-surface tracking-tight font-bold">Testimonial Hub</span>
+          <span>Testimonial <span class="text-blue-600">Hub</span></span>
         </a>
-        <div class="hidden md:flex items-center gap-2 pl-4 border-l border-surface-container-highest">
-          <span class="text-sm font-semibold text-on-surface">Wall of Love</span>
-          <span class="text-xs px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-medium">Public
-            Gallery</span>
-        </div>
       </div>
 
-      <!-- Navigation Links -->
-      <nav class="hidden md:flex items-center gap-6">
-        <a class="text-sm text-primary font-semibold flex items-center gap-1.5 transition-colors"
-          href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=wall' : '?page=wall' ?>"
-          target="_top">
-          <span class="material-symbols-outlined text-[18px]">favorite</span>
-          Wall of Love
-        </a>
-        <a class="text-sm text-on-surface-variant hover:text-on-surface font-medium flex items-center gap-1.5 transition-colors"
-          href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=form' : '?page=form' ?>"
-          target="_top">
-          <span class="material-symbols-outlined text-[18px]">rate_review</span>
-          Submit Praise
-        </a>
-        <a class="text-sm text-on-surface-variant hover:text-on-surface font-medium flex items-center gap-1.5 transition-colors"
-          href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=admin' : '?page=admin' ?>"
-          target="_top">
-          <span class="material-symbols-outlined text-[18px]">dashboard</span>
-          Admin Dashboard
-        </a>
-      </nav>
-
-      <!-- Right Action / Status -->
       <div class="flex items-center gap-3">
-        <div
-          class="flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full border border-surface-container-highest/60">
-          <span class="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
-          <span class="text-[11px] text-on-surface font-semibold uppercase tracking-wider">Live Embed</span>
-        </div>
-        <a href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=form' : '?page=form' ?>"
-          target="_top"
-          class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-on-primary text-xs font-semibold shadow-sm hover:bg-primary-container transition-all">
-          <span class="material-symbols-outlined text-[16px]">add</span>
-          <span>Add Review</span>
+        <a href="<?= adminUrl ?>" target="_top" class="text-xs text-slate-500 hover:text-slate-900 font-medium px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors hidden sm:inline-flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+          Admin
+        </a>
+        <a href="<?= formUrl ?>" target="_top"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition-all active:scale-95">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          Submit Review
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Container -->
-  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-32">
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
 
-    <!-- Hero Social Proof Banner -->
-    <section class="flex flex-col items-center text-center max-w-3xl mx-auto mb-10">
-      <!-- Ratings chip -->
-      <div
-        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-container/15 text-secondary mb-4 shadow-sm border border-secondary-container/30">
-        <div class="flex items-center text-secondary-container" id="heroStars">
-          <span class="material-symbols-outlined text-[18px] star-filled">star</span>
-          <span class="material-symbols-outlined text-[18px] star-filled">star</span>
-          <span class="material-symbols-outlined text-[18px] star-filled">star</span>
-          <span class="material-symbols-outlined text-[18px] star-filled">star</span>
-          <span class="material-symbols-outlined text-[18px] star-filled">star</span>
+    <!-- Hero Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+      <div>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/60 text-blue-700 text-xs font-semibold mb-3">
+          <span class="material-symbols-outlined text-[16px] star-filled">verified</span>
+          Social Proof
         </div>
-        <span class="text-xs font-semibold text-on-surface" id="heroRatingText">Verified Customer Stories</span>
+        <h1 class="font-headline text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Wall of Love
+        </h1>
+        <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+          Curated praise from our most successful users. Filter by topic tags to explore real-world experiences.
+        </p>
       </div>
 
-      <h1 class="font-headline text-3xl md:text-5xl font-extrabold text-on-surface tracking-tight leading-tight">
-        Loved by fast-moving creators &amp; teams
-      </h1>
-      <p class="text-sm md:text-base text-on-surface-variant mt-3 max-w-2xl">
-        Authentic, unedited feedback from real users sharing their experience, workflow wins, and quantifiable outcomes.
-      </p>
-
-      <!-- Customer Avatars Cluster -->
-      <div class="flex items-center justify-center -space-x-2.5 mt-5" id="heroAvatarCluster">
-        <div
-          class="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold ring-2 ring-surface shadow-sm">
-          ★
-        </div>
-      </div>
-    </section>
-
-    <!-- Horizontal Topic Filter Pill Bar -->
-    <div class="flex items-center justify-center mb-10 overflow-x-auto no-scrollbar py-1">
-      <div
-        class="inline-flex items-center p-1.5 rounded-full bg-surface-container-low border border-surface-container-high/80 shadow-sm gap-1.5 flex-wrap justify-center"
-        id="topicFilters" role="tablist">
-        <button aria-selected="true"
-          class="topic-btn px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-150 bg-primary text-on-primary shadow-sm hover:opacity-95 cursor-pointer"
-          data-tag="all" onclick="selectTopic('all')" type="button">
-          All Reviews (<span id="allCount"><?= (typeof testimonials !== 'undefined' && testimonials) ? testimonials.length : 3 ?></span>)
+      <!-- Highlight Quotes vs Full Testimonials View Toggle -->
+      <div class="inline-flex p-1 bg-slate-200/70 rounded-xl shrink-0 self-start md:self-auto border border-slate-300/40">
+        <button id="viewQuotesBtn"
+          class="px-4 py-2 text-xs font-semibold rounded-lg bg-white text-slate-900 shadow-sm transition-all cursor-pointer"
+          onclick="setViewMode('quotes')" type="button">
+          Highlight Quotes
+        </button>
+        <button id="viewFullBtn"
+          class="px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all cursor-pointer"
+          onclick="setViewMode('full')" type="button">
+          Full Testimonials
         </button>
       </div>
     </div>
 
-    <!-- Responsive Multi-Column Gallery Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" id="testimonialFeed">
-      <!-- Loading Skeleton -->
-      <div class="col-span-full py-16 text-center text-sm text-on-surface-variant flex flex-col items-center gap-2">
-        <span class="material-symbols-outlined text-[32px] text-primary animate-spin">progress_activity</span>
-        <span>Loading Wall of Love...</span>
-      </div>
+    <!-- Filter Pills Row -->
+    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 mb-8">
+      <button class="filter-pill px-4 py-2 rounded-full text-xs font-semibold transition-all duration-150 bg-blue-600 text-white shadow-sm shrink-0 cursor-pointer"
+        data-tag="all" onclick="filterByTag('all', this)" type="button">
+        All (<?= items.length ?>)
+      </button>
+
+      <? for (let t = 0; t < tagNames.length; t++) { 
+           const tagName = tagNames[t]; ?>
+        <button class="filter-pill px-4 py-2 rounded-full text-xs font-medium transition-all duration-150 bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 shrink-0 cursor-pointer"
+          data-tag="<?= tagName ?>" onclick="filterByTag('<?= tagName ?>', this)" type="button">
+          <?= tagName ?> (<?= tagCounts[tagName] ?>)
+        </button>
+      <? } ?>
+    </div>
+
+    <!-- Pre-Rendered Cards Grid (Instant Server-Side Render, Zero Loading Spinner) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" id="wallGrid">
+      <? if (items.length === 0) { ?>
+        <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-slate-200 p-8 max-w-md mx-auto">
+          <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3">
+            <span class="material-symbols-outlined text-[24px]">favorite</span>
+          </div>
+          <h3 class="font-headline font-bold text-slate-900 text-base">No reviews published yet</h3>
+          <p class="text-xs text-slate-500 mt-1 mb-5">Be the first to share your experience!</p>
+          <a href="<?= formUrl ?>" target="_top" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-xs font-semibold shadow-sm hover:bg-blue-700 transition-all">
+            Submit a Review
+          </a>
+        </div>
+      <? } ?>
+
+      <? for (let i = 0; i < items.length; i++) {
+           const it = items[i];
+           const rating = Number(it.rating) || 5;
+           const stars = '★'.repeat(rating) + '☆'.repeat(Math.max(0, 5 - rating));
+           const avatar = it.headshotUrl ? it.headshotUrl : 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg';
+           const quoteText = it.bestQuote ? it.bestQuote : it.testimonial;
+           const tagsList = it.tags || [];
+           const tagDataAttr = tagsList.join('|');
+      ?>
+        <article class="testimonial-card bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
+          data-tags="<?= tagDataAttr ?>">
+          <div>
+            <!-- Star Ratings -->
+            <div class="flex items-center text-amber-500 text-base mb-3 tracking-widest">
+              <?= stars ?>
+            </div>
+
+            <!-- Highlight Quote (Default View) -->
+            <blockquote class="highlight-quote font-headline font-bold text-slate-900 text-base sm:text-lg leading-snug mb-4">
+              &ldquo;<?= quoteText ?>&rdquo;
+            </blockquote>
+
+            <!-- Full Testimonial (Toggled View) -->
+            <p class="full-testimonial hidden text-slate-600 text-sm leading-relaxed mb-4">
+              <?= it.testimonial ?>
+            </p>
+          </div>
+
+          <!-- Author Info & Topic Chips Footer -->
+          <div class="pt-4 border-t border-slate-100 flex flex-col gap-3">
+            <div class="flex items-center gap-3">
+              <img class="w-10 h-10 rounded-full object-cover ring-1 ring-slate-200 bg-slate-100"
+                src="<?= avatar ?>" alt="<?= it.name ?>" loading="lazy" />
+              <div class="min-w-0">
+                <div class="font-headline font-bold text-sm text-slate-900 truncate"><?= it.name ?></div>
+                <? if (it.organization) { ?>
+                  <div class="text-xs text-slate-500 truncate"><?= it.organization ?></div>
+                <? } ?>
+              </div>
+            </div>
+
+            <!-- Topic Tag Chips -->
+            <? if (tagsList.length > 0) { ?>
+              <div class="flex flex-wrap gap-1.5 pt-1">
+                <? for (let k = 0; k < tagsList.length; k++) { ?>
+                  <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
+                    <?= tagsList[k] ?>
+                  </span>
+                <? } ?>
+              </div>
+            <? } ?>
+          </div>
+        </article>
+      <? } ?>
     </div>
 
     <!-- Empty State for Filters -->
-    <div
-      class="hidden flex-col items-center justify-center p-12 text-center bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-sm mt-6"
-      id="filterEmptyState">
-      <div class="w-14 h-14 rounded-full bg-surface-container-high text-primary flex items-center justify-center mb-4">
-        <span class="material-symbols-outlined text-[28px]">filter_list_off</span>
+    <div id="filterEmpty" class="hidden flex-col items-center justify-center py-16 text-center bg-white rounded-2xl border border-slate-200 p-8 max-w-md mx-auto mt-6">
+      <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mx-auto mb-3">
+        <span class="material-symbols-outlined text-[24px]">filter_list_off</span>
       </div>
-      <h3 class="font-headline text-lg font-bold text-on-surface">No reviews in this category yet</h3>
-      <p class="text-sm text-on-surface-variant mt-1.5 mb-5 max-w-sm">Try selecting "All Reviews" or choose another
-        topic tag above.</p>
-      <button
-        class="px-5 py-2.5 rounded-full bg-primary text-on-primary text-xs font-semibold hover:opacity-95 transition-opacity cursor-pointer"
-        onclick="resetFilter()" type="button">
+      <h3 class="font-headline font-bold text-slate-900 text-base">No reviews in this category</h3>
+      <p class="text-xs text-slate-500 mt-1 mb-5">Try selecting "All" or choosing another topic tag.</p>
+      <button onclick="resetToAll()" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-xs font-semibold shadow-sm hover:bg-blue-700 transition-all cursor-pointer" type="button">
         View All Reviews
       </button>
     </div>
 
-    <!-- Empty State when 0 Approved Testimonials exist globally -->
-    <div
-      class="hidden flex-col items-center justify-center p-12 text-center bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-sm mt-6 max-w-lg mx-auto"
-      id="globalEmptyState">
-      <div class="w-14 h-14 rounded-full bg-secondary-container/20 text-secondary flex items-center justify-center mb-4">
-        <span class="material-symbols-outlined text-[28px] star-filled">favorite</span>
-      </div>
-      <h3 class="font-headline text-lg font-bold text-on-surface">No approved customer reviews yet</h3>
-      <p class="text-sm text-on-surface-variant mt-1.5 mb-6 max-w-sm">
-        Authentic customer stories will appear here automatically once submitted and approved in the moderation queue.
-      </p>
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <a href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=form' : '?page=form' ?>"
-          class="px-5 py-2.5 rounded-full bg-primary text-on-primary text-xs font-semibold hover:opacity-95 transition-opacity shadow-sm inline-flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-[16px]">edit_note</span>
-          Submit First Review
-        </a>
-        <a href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=admin' : '?page=admin' ?>"
-          class="px-5 py-2.5 rounded-full bg-surface-container text-on-surface text-xs font-semibold hover:bg-surface-container-high transition-colors inline-flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
-          Admin Moderation
-        </a>
-      </div>
-    </div>
-
   </main>
 
-  <!-- Client-Side Gallery Logic (Aligned with Admin Dashboard) -->
+  <!-- Client-Side Filter & Toggle Interactions (Pure CSS/DOM, zero network calls) -->
   <script>
-    let approvedTestimonials = [];
     let activeTag = 'all';
-    let dataLoaded = false;
+    let viewMode = 'quotes';
 
-    // Initialize exactly like Admin Dashboard
-    document.addEventListener('DOMContentLoaded', () => {
-      loadWallData();
-    });
-
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      loadWallData();
-    }
-
-    function loadWallData() {
-      if (dataLoaded) return;
-
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(onDataLoaded)
-          .withFailureHandler(onDataLoadError)
-          .getAdminData();
-      } else {
-        // Fallback mock data for local testing
-        setTimeout(() => {
-          onDataLoaded({
-            testimonials: [
-              {
-                id: 'TEST-001',
-                timestamp: '2026-11-23',
-                name: 'Sarah Lin',
-                organization: 'HyperScale',
-                rating: 5,
-                testimonial: 'Automated collection workflows were an instant upgrade for our marketing sprint. Our users simply click our link, type their praise, and Testimonial Hub categorizes everything automatically with zero friction.',
-                bestQuote: 'Cut our testimonial collection time by 80%!',
-                tags: 'Time-Saving, AI Tools',
-                status: 'Approved',
-                headshotUrl: ''
-              },
-              {
-                id: 'TEST-002',
-                timestamp: '2026-11-22',
-                name: 'Marcus Vance',
-                organization: 'LaunchPad',
-                rating: 5,
-                testimonial: 'We embedded Testimonial Hub right below our checkout pricing table. Prospects can actually see authentic stories from real builders who launched successfully. Setup took less than three minutes!',
-                bestQuote: 'Our conversion rate jumped 24% after embedding this wall.',
-                tags: 'Beginner-Friendly',
-                status: 'Approved',
-                headshotUrl: ''
-              },
-              {
-                id: 'TEST-003',
-                timestamp: '2026-11-21',
-                name: 'Priya Sharma',
-                organization: 'CloudSync',
-                rating: 5,
-                testimonial: 'All our NPS responses stream directly from Testimonial Hub right into our shared operational spreadsheet. Our product team tags feature requests in seconds, while the best quotes auto-publish right to the public Wall of Love.',
-                bestQuote: 'The one-click Google Sheets sync is pure magic.',
-                tags: 'Google Sheets, Time-Saving',
-                status: 'Approved',
-                headshotUrl: ''
-              }
-            ]
-          });
-        }, 300);
-      }
-    }
-
-    function onDataLoaded(data) {
-      dataLoaded = true;
-      console.log('Testimonials received from getAdminData:', data);
-      const allItems = (data && data.testimonials) || [];
-      
-      // Filter for approved testimonials; if none explicitly marked approved, show all available
-      const approvedOnly = allItems.filter(item => String(item.status || '').toLowerCase() === 'approved');
-      approvedTestimonials = approvedOnly.length > 0 ? approvedOnly : allItems;
-
-      renderGallery(approvedTestimonials);
-    }
-
-    function onDataLoadError(err) {
-      console.error('Error loading wall data:', err);
-      const feed = document.getElementById('testimonialFeed');
-      if (feed) {
-        feed.innerHTML = `
-          <div class="col-span-full py-12 text-center text-error bg-surface-container-lowest rounded-2xl border border-error/20 p-8 max-w-lg mx-auto shadow-sm">
-            <p class="font-bold">Failed to load customer stories</p>
-            <p class="text-xs mt-1 text-on-surface-variant">${escapeHtml(err && (err.message || err.toString()) || 'Unknown error')}</p>
-            <button onclick="dataLoaded = false; loadWallData()" class="mt-4 px-5 py-2 bg-primary text-on-primary rounded-full text-xs font-semibold cursor-pointer shadow-sm hover:opacity-95">Retry</button>
-          </div>
-        `;
-      }
-    }
-
-    function getTagsArray(tags) {
-      if (Array.isArray(tags)) return tags;
-      if (typeof tags === 'string' && tags.trim()) {
-        return tags.split(',').map(t => t.trim()).filter(Boolean);
-      }
-      return [];
-    }
-
-    function renderGallery(items) {
-      approvedTestimonials = items || [];
-      const total = approvedTestimonials.length;
-
-      const allCountEl = document.getElementById('allCount');
-      if (allCountEl) allCountEl.textContent = total;
-
-      // Calculate rating stats
-      const heroRatingText = document.getElementById('heroRatingText');
-      if (heroRatingText) {
-        if (total > 0) {
-          const sum = approvedTestimonials.reduce((acc, curr) => acc + (Number(curr.rating) || 5), 0);
-          const avg = (sum / total).toFixed(1);
-          heroRatingText.textContent = `${avg}/5 from ${total} verified review${total > 1 ? 's' : ''}`;
-        } else {
-          heroRatingText.textContent = 'Verified Customer Reviews';
-        }
-      }
-
-      // Populate hero avatar cluster
-      populateHeroAvatars(approvedTestimonials);
-
-      // Build Dynamic Topic Filter Pills
-      buildTopicFilterPills(approvedTestimonials);
-
-      // Render Cards
-      filterAndRenderCards();
-    }
-
-    function populateHeroAvatars(items) {
-      const cluster = document.getElementById('heroAvatarCluster');
-      if (!cluster) return;
-
-      if (!items || items.length === 0) {
-        cluster.innerHTML = `
-          <div class="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold ring-2 ring-surface shadow-sm">
-            ★
-          </div>
-        `;
-        return;
-      }
-
-      const avatars = items.slice(0, 5).map(item => {
-        const src = item.headshotUrl || 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg';
-        return `<img class="w-9 h-9 rounded-full object-cover ring-2 ring-surface shadow-sm bg-surface-container" alt="${escapeHtml(item.name || 'Customer')}" src="${src}">`;
-      });
-
-      if (items.length > 5) {
-        avatars.push(`<div class="w-9 h-9 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center text-xs font-bold ring-2 ring-surface shadow-sm">+${items.length - 5}</div>`);
-      }
-
-      cluster.innerHTML = avatars.join('');
-    }
-
-    function buildTopicFilterPills(items) {
-      const container = document.getElementById('topicFilters');
-      if (!container) return;
-
-      const uniqueTags = new Set();
-      (items || []).forEach(item => {
-        const tags = getTagsArray(item.tags);
-        tags.forEach(t => uniqueTags.add(t));
-      });
-
-      let html = `
-        <button 
-          aria-selected="${activeTag === 'all' ? 'true' : 'false'}" 
-          class="topic-btn px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-150 ${activeTag === 'all' ? 'bg-primary text-on-primary shadow-sm' : 'bg-transparent text-on-surface-variant hover:bg-surface-container hover:text-on-surface'} cursor-pointer" 
-          data-tag="all" 
-          onclick="selectTopic('all')" 
-          type="button">
-          All Reviews (${items.length})
-        </button>
-      `;
-
-      uniqueTags.forEach(tag => {
-        const count = items.filter(it => getTagsArray(it.tags).includes(tag)).length;
-        const isSelected = activeTag === tag;
-        html += `
-          <button 
-            aria-selected="${isSelected ? 'true' : 'false'}" 
-            class="topic-btn px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-150 ${isSelected ? 'bg-primary text-on-primary shadow-sm font-semibold' : 'bg-transparent text-on-surface-variant hover:bg-surface-container hover:text-on-surface'} cursor-pointer" 
-            data-tag="${escapeHtml(tag)}" 
-            onclick="selectTopic('${escapeHtml(tag)}')" 
-            type="button">
-            ${escapeHtml(tag)} (${count})
-          </button>
-        `;
-      });
-
-      container.innerHTML = html;
-    }
-
-    function selectTopic(tag) {
+    function filterByTag(tag, btn) {
       activeTag = tag;
-      buildTopicFilterPills(approvedTestimonials);
-      filterAndRenderCards();
-    }
 
-    function resetFilter() {
-      selectTopic('all');
-    }
-
-    function filterAndRenderCards() {
-      const feed = document.getElementById('testimonialFeed');
-      const filterEmpty = document.getElementById('filterEmptyState');
-      const globalEmpty = document.getElementById('globalEmptyState');
-
-      if (!feed) return;
-
-      if (!approvedTestimonials || approvedTestimonials.length === 0) {
-        feed.innerHTML = '';
-        if (filterEmpty) {
-          filterEmpty.classList.add('hidden');
-          filterEmpty.classList.remove('flex');
-        }
-        if (globalEmpty) {
-          globalEmpty.classList.remove('hidden');
-          globalEmpty.classList.add('flex');
-        }
-        return;
+      // Update pill styles
+      document.querySelectorAll('.filter-pill').forEach(b => {
+        b.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+        b.classList.add('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+      });
+      if (btn) {
+        btn.classList.remove('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+        btn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
       }
 
-      if (globalEmpty) {
-        globalEmpty.classList.add('hidden');
-        globalEmpty.classList.remove('flex');
-      }
-
-      const filtered = approvedTestimonials.filter(item => {
-        if (activeTag === 'all') return true;
-        const tags = getTagsArray(item.tags);
-        return tags.includes(activeTag);
+      // Filter cards
+      const cards = document.querySelectorAll('.testimonial-card');
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const raw = card.getAttribute('data-tags') || '';
+        const tags = raw.split('|').map(t => t.trim().toLowerCase());
+        if (tag === 'all' || tags.includes(tag.toLowerCase())) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
       });
 
-      if (filtered.length === 0) {
-        feed.innerHTML = '';
-        if (filterEmpty) {
-          filterEmpty.classList.remove('hidden');
-          filterEmpty.classList.add('flex');
+      const empty = document.getElementById('filterEmpty');
+      if (empty) {
+        if (visibleCount === 0 && cards.length > 0) {
+          empty.classList.remove('hidden');
+          empty.classList.add('flex');
+        } else {
+          empty.classList.add('hidden');
+          empty.classList.remove('flex');
         }
-        return;
       }
-
-      if (filterEmpty) {
-        filterEmpty.classList.add('hidden');
-        filterEmpty.classList.remove('flex');
-      }
-
-      feed.innerHTML = filtered.map(item => {
-        const rating = Number(item.rating) || 5;
-        const starsHtml = '★'.repeat(rating) + '☆'.repeat(Math.max(0, 5 - rating));
-        const avatarSrc = item.headshotUrl || 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg';
-        const tags = getTagsArray(item.tags);
-
-        const tagsHtml = tags.map(tag => `
-          <span class="px-2.5 py-1 rounded-full bg-surface-container-high/80 text-on-surface text-xs font-medium">
-            ${escapeHtml(tag)}
-          </span>
-        `).join('');
-
-        const quoteHeadline = item.bestQuote
-          ? `“${escapeHtml(item.bestQuote)}”`
-          : `“${escapeHtml((item.testimonial && item.testimonial.length > 80) ? item.testimonial.slice(0, 77) + '...' : (item.testimonial || 'Customer review'))}”`;
-
-        return `
-          <article class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-surface-container-high/70 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-4">
-                <div class="flex items-center text-secondary-container text-base tracking-widest">
-                  ${starsHtml}
-                </div>
-                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed">
-                  <span class="material-symbols-outlined text-[14px] star-filled">verified</span>
-                  Verified Customer
-                </span>
-              </div>
-
-              <blockquote class="font-headline text-base sm:text-lg font-bold text-on-surface tracking-tight mb-3">
-                ${quoteHeadline}
-              </blockquote>
-
-              <p class="text-sm text-on-surface-variant leading-relaxed mb-5">
-                ${escapeHtml(item.testimonial || '')}
-              </p>
-
-              <div class="flex flex-wrap items-center gap-2 mb-6">
-                ${tagsHtml}
-              </div>
-            </div>
-
-            <!-- Author Footer (NO EMAIL for strict privacy) -->
-            <div class="flex items-center gap-3.5 pt-4 border-t border-surface-container-high/60">
-              <img class="w-11 h-11 rounded-full object-cover shadow-sm ring-1 ring-surface-container-highest bg-surface-container" alt="${escapeHtml(item.name || 'Customer')}" src="${avatarSrc}">
-              <div class="flex flex-col min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-sm font-semibold text-on-surface truncate">${escapeHtml(item.name || 'Anonymous')}</span>
-                  <span class="material-symbols-outlined text-[16px] text-primary star-filled">check_circle</span>
-                </div>
-                ${item.organization ? `<span class="text-xs text-on-surface-variant truncate">${escapeHtml(item.organization)}</span>` : ''}
-              </div>
-            </div>
-          </article>
-        `;
-      }).join('');
     }
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    function resetToAll() {
+      const allBtn = document.querySelector('.filter-pill[data-tag="all"]');
+      filterByTag('all', allBtn);
+    }
+
+    function setViewMode(mode) {
+      viewMode = mode;
+      const quotesBtn = document.getElementById('viewQuotesBtn');
+      const fullBtn = document.getElementById('viewFullBtn');
+      const quoteEls = document.querySelectorAll('.highlight-quote');
+      const fullEls = document.querySelectorAll('.full-testimonial');
+
+      if (mode === 'quotes') {
+        quotesBtn.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+        quotesBtn.classList.remove('text-slate-600');
+        fullBtn.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+        fullBtn.classList.add('text-slate-600');
+
+        quoteEls.forEach(el => el.classList.remove('hidden'));
+        fullEls.forEach(el => el.classList.add('hidden'));
+      } else {
+        fullBtn.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+        fullBtn.classList.remove('text-slate-600');
+        quotesBtn.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+        quotesBtn.classList.add('text-slate-600');
+
+        quoteEls.forEach(el => el.classList.add('hidden'));
+        fullEls.forEach(el => el.classList.remove('hidden'));
+      }
     }
   </script>
 </body>
