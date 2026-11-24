@@ -220,6 +220,31 @@
       </button>
     </div>
 
+    <!-- Empty State when 0 Approved Testimonials exist globally -->
+    <div
+      class="hidden flex-col items-center justify-center p-12 text-center bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-sm mt-6 max-w-lg mx-auto"
+      id="globalEmptyState">
+      <div class="w-14 h-14 rounded-full bg-secondary-container/20 text-secondary flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-[28px] star-filled">favorite</span>
+      </div>
+      <h3 class="font-headline text-lg font-bold text-on-surface">No approved customer reviews yet</h3>
+      <p class="text-sm text-on-surface-variant mt-1.5 mb-6 max-w-sm">
+        Authentic customer stories will appear here automatically once submitted and approved in the moderation queue.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=form' : '?page=form' ?>"
+          class="px-5 py-2.5 rounded-full bg-primary text-on-primary text-xs font-semibold hover:opacity-95 transition-opacity shadow-sm inline-flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">edit_note</span>
+          Submit First Review
+        </a>
+        <a href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=admin' : '?page=admin' ?>"
+          class="px-5 py-2.5 rounded-full bg-surface-container text-on-surface text-xs font-semibold hover:bg-surface-container-high transition-colors inline-flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+          Admin Moderation
+        </a>
+      </div>
+    </div>
+
   </main>
 
   <!-- Desktop Bottom Dock: Copy Embed Code -->
@@ -270,21 +295,66 @@
   <script>
     let approvedTestimonials = [];
     let activeTag = 'all';
+    let fetchTimeoutTimer = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function initGallery() {
       fetchApprovedTestimonials();
       setupCopyEmbed();
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGallery);
+    } else {
+      initGallery();
+    }
 
     function fetchApprovedTestimonials() {
+      const feed = document.getElementById('testimonialFeed');
+      const filterEmpty = document.getElementById('filterEmptyState');
+      const globalEmpty = document.getElementById('globalEmptyState');
+
+      if (filterEmpty) {
+        filterEmpty.classList.add('hidden');
+        filterEmpty.classList.remove('flex');
+      }
+      if (globalEmpty) {
+        globalEmpty.classList.add('hidden');
+        globalEmpty.classList.remove('flex');
+      }
+
+      if (feed) {
+        feed.innerHTML = `
+          <div class="col-span-full py-16 text-center text-sm text-on-surface-variant flex flex-col items-center gap-2">
+            <span class="material-symbols-outlined text-[32px] text-primary animate-spin">progress_activity</span>
+            <span>Loading Wall of Love...</span>
+          </div>
+        `;
+      }
+
+      // Timeout watchdog: 7 seconds fallback if server call hangs
+      if (fetchTimeoutTimer) clearTimeout(fetchTimeoutTimer);
+      fetchTimeoutTimer = setTimeout(() => {
+        if (approvedTestimonials.length === 0) {
+          console.warn('Testimonial fetch timed out. Rendering retry UI.');
+          onGalleryTimeout();
+        }
+      }, 7000);
+
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
-          .withSuccessHandler(renderGallery)
-          .withFailureHandler(onGalleryError)
+          .withSuccessHandler((data) => {
+            if (fetchTimeoutTimer) clearTimeout(fetchTimeoutTimer);
+            renderGallery(data);
+          })
+          .withFailureHandler((err) => {
+            if (fetchTimeoutTimer) clearTimeout(fetchTimeoutTimer);
+            onGalleryError(err);
+          })
           .getApprovedTestimonials();
       } else {
         // Mock data for preview/development
         setTimeout(() => {
+          if (fetchTimeoutTimer) clearTimeout(fetchTimeoutTimer);
           renderGallery([
             {
               id: 'TEST-001',
@@ -325,18 +395,23 @@
     }
 
     function renderGallery(testimonials) {
+      console.log('Rendering gallery with', (testimonials || []).length, 'testimonials');
       approvedTestimonials = testimonials || [];
       const total = approvedTestimonials.length;
 
-      document.getElementById('allCount').textContent = total;
+      const allCountEl = document.getElementById('allCount');
+      if (allCountEl) allCountEl.textContent = total;
 
       // Calculate rating stats
-      if (total > 0) {
-        const sum = approvedTestimonials.reduce((acc, curr) => acc + (curr.rating || 5), 0);
-        const avg = (sum / total).toFixed(1);
-        document.getElementById('heroRatingText').textContent = `${avg}/5 from ${total} verified review${total > 1 ? 's' : ''}`;
-      } else {
-        document.getElementById('heroRatingText').textContent = 'Verified Customer Reviews';
+      const heroRatingText = document.getElementById('heroRatingText');
+      if (heroRatingText) {
+        if (total > 0) {
+          const sum = approvedTestimonials.reduce((acc, curr) => acc + (Number(curr.rating) || 5), 0);
+          const avg = (sum / total).toFixed(1);
+          heroRatingText.textContent = `${avg}/5 from ${total} verified review${total > 1 ? 's' : ''}`;
+        } else {
+          heroRatingText.textContent = 'Verified Customer Reviews';
+        }
       }
 
       // Populate hero avatar cluster
@@ -351,7 +426,16 @@
 
     function populateHeroAvatars(items) {
       const cluster = document.getElementById('heroAvatarCluster');
-      if (!cluster || items.length === 0) return;
+      if (!cluster) return;
+
+      if (items.length === 0) {
+        cluster.innerHTML = `
+          <div class="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold ring-2 ring-surface shadow-sm">
+            ★
+          </div>
+        `;
+        return;
+      }
 
       const avatars = items.slice(0, 5).map(item => {
         const src = item.headshotUrl || 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg';
@@ -367,12 +451,13 @@
 
     function buildTopicFilterPills(items) {
       const container = document.getElementById('topicFilters');
-      const uniqueTags = new Set();
+      if (!container) return;
 
+      const uniqueTags = new Set();
       items.forEach(item => {
         if (Array.isArray(item.tags)) {
           item.tags.forEach(t => {
-            const clean = t.trim();
+            const clean = String(t).trim();
             if (clean) uniqueTags.add(clean);
           });
         }
@@ -419,25 +504,53 @@
 
     function filterAndRenderCards() {
       const feed = document.getElementById('testimonialFeed');
-      const emptyState = document.getElementById('filterEmptyState');
+      const filterEmpty = document.getElementById('filterEmptyState');
+      const globalEmpty = document.getElementById('globalEmptyState');
+
+      // Case 1: No approved testimonials exist globally in the database
+      if (approvedTestimonials.length === 0) {
+        if (feed) feed.innerHTML = '';
+        if (filterEmpty) {
+          filterEmpty.classList.add('hidden');
+          filterEmpty.classList.remove('flex');
+        }
+        if (globalEmpty) {
+          globalEmpty.classList.remove('hidden');
+          globalEmpty.classList.add('flex');
+        }
+        return;
+      }
+
+      // Hide global empty state when testimonials exist
+      if (globalEmpty) {
+        globalEmpty.classList.add('hidden');
+        globalEmpty.classList.remove('flex');
+      }
 
       const filtered = approvedTestimonials.filter(item => {
         if (activeTag === 'all') return true;
         return Array.isArray(item.tags) && item.tags.includes(activeTag);
       });
 
+      // Case 2: Specific topic filter returns zero results
       if (filtered.length === 0) {
-        feed.innerHTML = '';
-        emptyState.classList.remove('hidden');
-        emptyState.classList.add('flex');
+        if (feed) feed.innerHTML = '';
+        if (filterEmpty) {
+          filterEmpty.classList.remove('hidden');
+          filterEmpty.classList.add('flex');
+        }
         return;
       }
 
-      emptyState.classList.add('hidden');
-      emptyState.classList.remove('flex');
+      // Case 3: Render matching testimonials
+      if (filterEmpty) {
+        filterEmpty.classList.add('hidden');
+        filterEmpty.classList.remove('flex');
+      }
 
       feed.innerHTML = filtered.map(item => {
-        const starsHtml = '★'.repeat(item.rating || 5) + '☆'.repeat(5 - (item.rating || 5));
+        const rating = Number(item.rating) || 5;
+        const starsHtml = '★'.repeat(rating) + '☆'.repeat(Math.max(0, 5 - rating));
         const avatarSrc = item.headshotUrl || 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg';
 
         const tagsHtml = (item.tags || []).map(tag => `
@@ -448,7 +561,7 @@
 
         const quoteHeadline = item.bestQuote
           ? `“${escapeHtml(item.bestQuote)}”`
-          : `“${escapeHtml(item.testimonial.length > 80 ? item.testimonial.slice(0, 77) + '...' : item.testimonial)}”`;
+          : `“${escapeHtml((item.testimonial && item.testimonial.length > 80) ? item.testimonial.slice(0, 77) + '...' : (item.testimonial || ''))}”`;
 
         return `
           <article class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-surface-container-high/70 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between">
@@ -471,7 +584,7 @@
 
               <!-- Full Review Copy -->
               <p class="text-sm text-on-surface-variant leading-relaxed mb-5">
-                ${escapeHtml(item.testimonial)}
+                ${escapeHtml(item.testimonial || '')}
               </p>
 
               <!-- Topic Chips -->
@@ -482,10 +595,10 @@
 
             <!-- Author Footer (NO EMAIL for strict privacy) -->
             <div class="flex items-center gap-3.5 pt-4 border-t border-surface-container-high/60">
-              <img class="w-11 h-11 rounded-full object-cover shadow-sm ring-1 ring-surface-container-highest bg-surface-container" alt="${escapeHtml(item.name)}" src="${avatarSrc}">
+              <img class="w-11 h-11 rounded-full object-cover shadow-sm ring-1 ring-surface-container-highest bg-surface-container" alt="${escapeHtml(item.name || '')}" src="${avatarSrc}">
               <div class="flex flex-col min-w-0">
                 <div class="flex items-center gap-1.5">
-                  <span class="text-sm font-semibold text-on-surface truncate">${escapeHtml(item.name)}</span>
+                  <span class="text-sm font-semibold text-on-surface truncate">${escapeHtml(item.name || 'Anonymous')}</span>
                   <span class="material-symbols-outlined text-[16px] text-primary star-filled">check_circle</span>
                 </div>
                 ${item.organization ? `<span class="text-xs text-on-surface-variant truncate">${escapeHtml(item.organization)}</span>` : ''}
@@ -496,12 +609,48 @@
       }).join('');
     }
 
-    function onGalleryError(err) {
+    function onGalleryTimeout() {
       const feed = document.getElementById('testimonialFeed');
+      if (!feed) return;
       feed.innerHTML = `
-        <div class="col-span-full py-12 text-center text-error">
-          <p class="font-semibold">Failed to load testimonials.</p>
-          <p class="text-xs mt-1">${escapeHtml(err.message || err.toString())}</p>
+        <div class="col-span-full py-12 text-center bg-surface-container-lowest rounded-2xl border border-surface-container-high p-8 max-w-lg mx-auto shadow-sm">
+          <div class="w-12 h-12 rounded-full bg-secondary-container/20 text-secondary flex items-center justify-center mx-auto mb-3">
+            <span class="material-symbols-outlined text-[26px]">cloud_sync</span>
+          </div>
+          <h4 class="font-headline font-bold text-on-surface text-base">Taking longer than usual</h4>
+          <p class="text-xs text-on-surface-variant mt-1.5 mb-5 leading-relaxed">
+            The connection to the database is taking a few moments. Please click below to refresh.
+          </p>
+          <button 
+            type="button" 
+            onclick="fetchApprovedTestimonials()" 
+            class="px-5 py-2.5 rounded-full bg-primary text-on-primary text-xs font-semibold hover:opacity-95 transition-all shadow-sm cursor-pointer inline-flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px]">refresh</span>
+            Try Again
+          </button>
+        </div>
+      `;
+    }
+
+    function onGalleryError(err) {
+      console.error('Error in onGalleryError:', err);
+      const feed = document.getElementById('testimonialFeed');
+      if (!feed) return;
+      const errMsg = err && (err.message || err.toString()) ? escapeHtml(err.message || err.toString()) : 'Server connection failed';
+      feed.innerHTML = `
+        <div class="col-span-full py-12 text-center bg-surface-container-lowest rounded-2xl border border-error/20 p-8 max-w-lg mx-auto shadow-sm">
+          <div class="w-12 h-12 rounded-full bg-error/10 text-error flex items-center justify-center mx-auto mb-3">
+            <span class="material-symbols-outlined text-[26px]">error_outline</span>
+          </div>
+          <h4 class="font-headline font-bold text-error text-base">Failed to load testimonials</h4>
+          <p class="text-xs text-on-surface-variant mt-1.5 mb-5">${errMsg}</p>
+          <button 
+            type="button" 
+            onclick="fetchApprovedTestimonials()" 
+            class="px-5 py-2.5 rounded-full bg-primary text-on-primary text-xs font-semibold hover:opacity-95 transition-all shadow-sm cursor-pointer inline-flex items-center gap-2">
+            <span class="material-symbols-outlined text-[16px]">refresh</span>
+            Retry
+          </button>
         </div>
       `;
     }
