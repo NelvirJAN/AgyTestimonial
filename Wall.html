@@ -89,29 +89,48 @@
     const wallUrl = baseHref ? (baseHref + '?page=wall') : '?page=wall';
   ?>
 
-  <!-- Top Navigation Bar -->
-  <header class="w-full bg-white border-b border-slate-200 sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+  <!-- Top Navigation Bar (Shared Design with Admin & Form) -->
+  <header class="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <!-- Left: Brand & Navigation Links -->
+    <div class="flex items-center gap-8">
       <div class="flex items-center gap-3">
-        <a class="flex items-center gap-2.5 font-headline font-bold text-lg text-slate-900" href="<?= wallUrl ?>" target="_top">
-          <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm font-black shadow-sm">
-            99
+        <a href="<?= wallUrl ?>" target="_top" class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
           </div>
-          <span>Testimonial <span class="text-blue-600">Hub</span></span>
+          <span class="font-headline text-lg text-slate-900 tracking-tight font-bold">Testimonial Hub</span>
         </a>
+        <div class="flex items-center gap-1.5 px-2.5 py-0.5 ml-1 bg-slate-100 rounded-full border border-slate-200/60">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-[11px] text-slate-700 font-semibold uppercase tracking-wider">Live</span>
+        </div>
       </div>
 
-      <div class="flex items-center gap-3">
-        <a href="<?= adminUrl ?>" target="_top" class="text-xs text-slate-500 hover:text-slate-900 font-medium px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors hidden sm:inline-flex items-center gap-1">
-          <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
-          Admin
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1">
+        <a class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-sm font-medium transition-colors flex items-center gap-2" href="<?= formUrl ?>" target="_top">
+          <span class="material-symbols-outlined text-[18px]">rate_review</span>
+          <span>Submit Praise</span>
         </a>
-        <a href="<?= formUrl ?>" target="_top"
-          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition-all active:scale-95">
-          <span class="material-symbols-outlined text-[18px]">add</span>
-          Submit Review
+        <!-- Active Tab: Wall of Love -->
+        <a class="px-3.5 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-sm font-semibold transition-colors flex items-center gap-2" href="<?= wallUrl ?>" target="_top">
+          <span class="material-symbols-outlined text-[18px] text-blue-600">favorite</span>
+          <span>Wall of Love</span>
         </a>
-      </div>
+        <a class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-sm font-medium transition-colors flex items-center gap-2" href="<?= adminUrl ?>" target="_top">
+          <span class="material-symbols-outlined text-[18px]">dashboard</span>
+          <span>Admin Dashboard</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-3">
+      <a href="<?= formUrl ?>" target="_top"
+        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition-all active:scale-95">
+        <span class="material-symbols-outlined text-[16px]">add</span>
+        <span>Submit Review</span>
+      </a>
     </div>
   </header>
 
