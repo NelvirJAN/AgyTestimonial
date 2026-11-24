@@ -297,16 +297,17 @@
     let approvedTestimonials = [];
     let activeTag = 'all';
     let fetchTimeoutTimer = null;
+    let apiPollAttempts = 0;
 
     function initGallery() {
-      fetchApprovedTestimonials();
-      setupCopyEmbed();
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initGallery);
-    } else {
-      initGallery();
+      try {
+        console.log('[WallOfLove] Initializing gallery...');
+        setupCopyEmbed();
+        fetchApprovedTestimonials();
+      } catch (err) {
+        console.error('[WallOfLove] Initialization error:', err);
+        showFatalError('Failed to initialize Wall of Love: ' + (err.message || err.toString()));
+      }
     }
 
     function fetchApprovedTestimonials() {
@@ -323,7 +324,7 @@
         globalEmpty.classList.remove('flex');
       }
 
-      if (feed) {
+      if (feed && approvedTestimonials.length === 0) {
         feed.innerHTML = `
           <div class="col-span-full py-16 text-center text-sm text-on-surface-variant flex flex-col items-center gap-2">
             <span class="material-symbols-outlined text-[32px] text-primary animate-spin">progress_activity</span>
@@ -332,97 +333,113 @@
         `;
       }
 
-      // Timeout watchdog: 7 seconds fallback if server call hangs
+      // Timeout watchdog: 8 seconds fallback if server call hangs
       if (fetchTimeoutTimer) clearTimeout(fetchTimeoutTimer);
       fetchTimeoutTimer = setTimeout(() => {
         if (approvedTestimonials.length === 0) {
-          console.warn('Testimonial fetch timed out. Rendering retry UI.');
+          console.warn('[WallOfLove] Testimonial fetch timed out. Rendering retry UI.');
           onGalleryTimeout();
         }
-      }, 7000);
+      }, 8000);
 
+      // Check if Google Apps Script API is ready
       if (typeof google !== 'undefined' && google.script && google.script.run) {
+        console.log('[WallOfLove] Calling google.script.run.getApprovedTestimonials()');
         google.script.run
           .withSuccessHandler((data) => {
             if (fetchTimeoutTimer) clearTimeout(fetchTimeoutTimer);
+            console.log('[WallOfLove] Received data from server:', data);
             renderGallery(data);
           })
           .withFailureHandler((err) => {
             if (fetchTimeoutTimer) clearTimeout(fetchTimeoutTimer);
+            console.error('[WallOfLove] Error from server:', err);
             onGalleryError(err);
           })
           .getApprovedTestimonials();
       } else {
-        // Mock data for preview/development
-        setTimeout(() => {
-          if (fetchTimeoutTimer) clearTimeout(fetchTimeoutTimer);
-          renderGallery([
-            {
-              id: 'TEST-001',
-              timestamp: '2026-11-23',
-              name: 'Sarah Lin',
-              organization: 'HyperScale',
-              rating: 5,
-              testimonial: 'Automated collection workflows were an instant upgrade for our marketing sprint. Our users simply click our link, type their praise, and Testimonial Hub categorizes everything automatically with zero friction.',
-              bestQuote: 'Cut our testimonial collection time by 80%!',
-              tags: ['Time-Saving', 'AI Tools'],
-              headshotUrl: ''
-            },
-            {
-              id: 'TEST-002',
-              timestamp: '2026-11-22',
-              name: 'Marcus Vance',
-              organization: 'LaunchPad',
-              rating: 5,
-              testimonial: 'We embedded Testimonial Hub right below our checkout pricing table. Prospects can actually see authentic stories from real builders who launched successfully. Setup took less than three minutes!',
-              bestQuote: 'Our conversion rate jumped 24% after embedding this wall.',
-              tags: ['Beginner-Friendly'],
-              headshotUrl: ''
-            },
-            {
-              id: 'TEST-003',
-              timestamp: '2026-11-21',
-              name: 'Priya Sharma',
-              organization: 'CloudSync',
-              rating: 5,
-              testimonial: 'All our NPS responses stream directly from Testimonial Hub right into our shared operational spreadsheet. Our product team tags feature requests in seconds, while the best quotes auto-publish right to the public Wall of Love.',
-              bestQuote: 'The one-click Google Sheets sync is pure magic.',
-              tags: ['Google Sheets', 'Time-Saving'],
-              headshotUrl: ''
-            }
-          ]);
-        }, 500);
+        // Poll every 100ms for up to 30 attempts (3 seconds) while Google injects google.script.run
+        apiPollAttempts++;
+        if (apiPollAttempts <= 30) {
+          setTimeout(fetchApprovedTestimonials, 100);
+        } else {
+          // If running in local standalone preview, fallback to mock data
+          console.warn('[WallOfLove] google.script.run not found after 3s. Falling back to preview mock data.');
+          setTimeout(() => {
+            if (fetchTimeoutTimer) clearTimeout(fetchTimeoutTimer);
+            renderGallery([
+              {
+                id: 'TEST-001',
+                timestamp: '2026-11-23',
+                name: 'Sarah Lin',
+                organization: 'HyperScale',
+                rating: 5,
+                testimonial: 'Automated collection workflows were an instant upgrade for our marketing sprint. Our users simply click our link, type their praise, and Testimonial Hub categorizes everything automatically with zero friction.',
+                bestQuote: 'Cut our testimonial collection time by 80%!',
+                tags: ['Time-Saving', 'AI Tools'],
+                headshotUrl: ''
+              },
+              {
+                id: 'TEST-002',
+                timestamp: '2026-11-22',
+                name: 'Marcus Vance',
+                organization: 'LaunchPad',
+                rating: 5,
+                testimonial: 'We embedded Testimonial Hub right below our checkout pricing table. Prospects can actually see authentic stories from real builders who launched successfully. Setup took less than three minutes!',
+                bestQuote: 'Our conversion rate jumped 24% after embedding this wall.',
+                tags: ['Beginner-Friendly'],
+                headshotUrl: ''
+              },
+              {
+                id: 'TEST-003',
+                timestamp: '2026-11-21',
+                name: 'Priya Sharma',
+                organization: 'CloudSync',
+                rating: 5,
+                testimonial: 'All our NPS responses stream directly from Testimonial Hub right into our shared operational spreadsheet. Our product team tags feature requests in seconds, while the best quotes auto-publish right to the public Wall of Love.',
+                bestQuote: 'The one-click Google Sheets sync is pure magic.',
+                tags: ['Google Sheets', 'Time-Saving'],
+                headshotUrl: ''
+              }
+            ]);
+          }, 300);
+        }
       }
     }
 
     function renderGallery(testimonials) {
-      console.log('Rendering gallery with', (testimonials || []).length, 'testimonials');
-      approvedTestimonials = testimonials || [];
-      const total = approvedTestimonials.length;
+      try {
+        console.log('[WallOfLove] Rendering gallery with', (testimonials || []).length, 'testimonials');
+        approvedTestimonials = Array.isArray(testimonials) ? testimonials : [];
+        const total = approvedTestimonials.length;
 
-      const allCountEl = document.getElementById('allCount');
-      if (allCountEl) allCountEl.textContent = total;
+        const allCountEl = document.getElementById('allCount');
+        if (allCountEl) allCountEl.textContent = total;
 
-      // Calculate rating stats
-      const heroRatingText = document.getElementById('heroRatingText');
-      if (heroRatingText) {
-        if (total > 0) {
-          const sum = approvedTestimonials.reduce((acc, curr) => acc + (Number(curr.rating) || 5), 0);
-          const avg = (sum / total).toFixed(1);
-          heroRatingText.textContent = `${avg}/5 from ${total} verified review${total > 1 ? 's' : ''}`;
-        } else {
-          heroRatingText.textContent = 'Verified Customer Reviews';
+        // Calculate rating stats
+        const heroRatingText = document.getElementById('heroRatingText');
+        if (heroRatingText) {
+          if (total > 0) {
+            const sum = approvedTestimonials.reduce((acc, curr) => acc + (Number(curr.rating) || 5), 0);
+            const avg = (sum / total).toFixed(1);
+            heroRatingText.textContent = `${avg}/5 from ${total} verified review${total > 1 ? 's' : ''}`;
+          } else {
+            heroRatingText.textContent = 'Verified Customer Reviews';
+          }
         }
+
+        // Populate hero avatar cluster
+        populateHeroAvatars(approvedTestimonials);
+
+        // Build Dynamic Topic Filter Pills
+        buildTopicFilterPills(approvedTestimonials);
+
+        // Render Cards
+        filterAndRenderCards();
+      } catch (err) {
+        console.error('[WallOfLove] Render error:', err);
+        showFatalError('Failed to display testimonials: ' + (err.message || err.toString()));
       }
-
-      // Populate hero avatar cluster
-      populateHeroAvatars(approvedTestimonials);
-
-      // Build Dynamic Topic Filter Pills
-      buildTopicFilterPills(approvedTestimonials);
-
-      // Render Cards
-      filterAndRenderCards();
     }
 
     function populateHeroAvatars(items) {
@@ -710,6 +727,38 @@
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
     }
+    function showFatalError(msg) {
+      const feed = document.getElementById('testimonialFeed');
+      if (feed) {
+        feed.innerHTML = `
+          <div class="col-span-full py-12 text-center bg-surface-container-lowest rounded-2xl border border-error/30 p-8 max-w-lg mx-auto shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-error/10 text-error flex items-center justify-center mx-auto mb-3">
+              <span class="material-symbols-outlined text-[26px]">error_outline</span>
+            </div>
+            <h4 class="font-headline font-bold text-error text-base">Unable to load testimonials</h4>
+            <p class="text-xs text-on-surface-variant mt-1.5 mb-5">${escapeHtml(msg)}</p>
+            <button 
+              type="button" 
+              onclick="apiPollAttempts = 0; fetchApprovedTestimonials()" 
+              class="px-5 py-2.5 rounded-full bg-primary text-on-primary text-xs font-semibold hover:opacity-95 transition-all shadow-sm cursor-pointer inline-flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px]">refresh</span>
+              Retry
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // Execute immediately since all DOM elements are already constructed above
+    initGallery();
+
+    // Fallback on window load in case browser delayed script execution
+    window.addEventListener('load', () => {
+      if (approvedTestimonials.length === 0 && apiPollAttempts < 5) {
+        console.log('[WallOfLove] Window load event triggered secondary check');
+        fetchApprovedTestimonials();
+      }
+    });
   </script>
 </body>
 
