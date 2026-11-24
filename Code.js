@@ -73,6 +73,9 @@ function doGet(e) {
     } catch (err) {
       template.scriptUrl = '';
     }
+    if (page === 'wall') {
+      template.testimonials = getWallTestimonials();
+    }
     return template.evaluate()
       .setTitle(title)
       .addMetaTag('viewport', 'width=device-width, initial-scale=1')
@@ -573,6 +576,52 @@ function updateTestimonial(id, updates) {
 // ==========================================
 // PUBLIC WALL OF LOVE ENDPOINT (STRICT PRIVACY)
 // ==========================================
+
+/**
+ * Returns testimonials for Wall.html.
+ * Includes all testimonials from the sheet (sanitized without email)
+ * so that all customer stories are immediately available.
+ */
+function getWallTestimonials() {
+  try {
+    const sheet = getOrCreateSheet();
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) {
+      return [];
+    }
+
+    const items = [];
+    const rows = data.slice(1);
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const rawTags = String(row[9] || '');
+      const tagList = rawTags
+        ? rawTags.split(',').map(t => t.trim()).filter(Boolean)
+        : [];
+
+      // STRICT SANITIZATION: Never include email (row[4])
+      items.push({
+        id: String(row[0] || ''),
+        timestamp: String(row[1] || ''),
+        status: String(row[2] || ''),
+        name: String(row[3] || 'Anonymous'),
+        organization: String(row[5] || ''),
+        rating: Number(row[6]) || 5,
+        testimonial: String(row[7] || ''),
+        bestQuote: String(row[8] || ''),
+        tags: tagList,
+        headshotUrl: String(row[10] || '')
+      });
+    }
+
+    return items.reverse(); // Newest first
+  } catch (err) {
+    Logger.log('Error in getWallTestimonials: ' + err.toString());
+    return [];
+  }
+}
 
 /**
  * Returns ONLY approved testimonials for Wall.html.
