@@ -1,11 +1,11 @@
 # Testimonial Hub - System Context & Operational Architecture
 
-> **Document Version:** 1.3.0  
-> **Last Updated:** November 24, 2026, 11:00  
+> **Document Version:** 1.4.0  
+> **Last Updated:** November 24, 2026, 18:45  
 > **Status:** Production-Ready & Verified / Pushed to Google Apps Script & GitHub  
 > **Repository:** `https://github.com/NelvirJAN/AgyTestimonial.git` (`main`)  
-> **Latest Git Commit:** `802652e` (*"Support Slack webhook Block Kit notifications with auto-detection"*)  
-> **Apps Script Deployment:** `AKfycbzL0t0NZ6rChidIEx8DDqF_yq8BJx_G9HlM3IG_kmU_0w4EKSq5soZ1Vbu7s_fvx6N5` (**Version 6 / `@6`**)  
+> **Latest Git Commit:** `029aa15` (*"Adopt Ben Collins server-rendered architecture and matching layout for Wall of Love"*)  
+> **Apps Script Deployment:** `AKfycbzL0t0NZ6rChidIEx8DDqF_yq8BJx_G9HlM3IG_kmU_0w4EKSq5soZ1Vbu7s_fvx6N5` (**Version 12 / `@12`**)  
 > **Apps Script ID:** `19wXYaiigS78Ce6b5xVLyGf4Dm-9PL0V3yGvaCM8K6Zroc9fDpUZGWg66`
 
 ---
@@ -151,6 +151,9 @@ PropertiesService.getScriptProperties()
    - Secrets are stored exclusively in server-side `PropertiesService`, preventing accidental exposure in client-facing HTML or repository code.
 6. **Platform Boundary Management:**
    - Google Apps Script Cloud IDE rejects `.md` files via the Apps Script API (only `.js`, `.gs`, `.html`, and `appsscript.json` are permitted). All markdown documentation is maintained in Git version control.
+7. **Server-Side Pre-Rendering for Public Web Apps (Ben Collins Pattern):**
+   - For public read-only views like the Wall of Love, avoid client-side asynchronous fetch loops (`google.script.run`) with loading spinners, which can get trapped by iframe lifecycle events and browser storage restrictions.
+   - Instead, pre-render the data directly on the server using native Apps Script scriptlets (`<? for (let item of items) { ?>`). The browser receives fully formed HTML with cards, counts, and tags on first paint with zero lag. All filtering and quote toggles execute locally in client-side CSS/DOM in real-time.
 
 ---
 
