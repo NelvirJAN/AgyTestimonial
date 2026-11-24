@@ -1,11 +1,11 @@
 # Testimonial Hub - System Context & Operational Architecture
 
-> **Document Version:** 1.4.0  
-> **Last Updated:** November 24, 2026, 18:45  
+> **Document Version:** 1.5.0  
+> **Last Updated:** November 25, 2026, 00:15  
 > **Status:** Production-Ready & Verified / Pushed to Google Apps Script & GitHub  
 > **Repository:** `https://github.com/NelvirJAN/AgyTestimonial.git` (`main`)  
-> **Latest Git Commit:** `029aa15` (*"Adopt Ben Collins server-rendered architecture and matching layout for Wall of Love"*)  
-> **Apps Script Deployment:** `AKfycbzL0t0NZ6rChidIEx8DDqF_yq8BJx_G9HlM3IG_kmU_0w4EKSq5soZ1Vbu7s_fvx6N5` (**Version 12 / `@12`**)  
+> **Latest Git Commit:** `35a406d` (*"feat(wall): align top navigation bar with Admin and Form pages with active highlight"*)  
+> **Apps Script Deployment:** `AKfycbzL0t0NZ6rChidIEx8DDqF_yq8BJx_G9HlM3IG_kmU_0w4EKSq5soZ1Vbu7s_fvx6N5` (**Version 13 / `@13`**)  
 > **Apps Script ID:** `19wXYaiigS78Ce6b5xVLyGf4Dm-9PL0V3yGvaCM8K6Zroc9fDpUZGWg66`
 
 ---
