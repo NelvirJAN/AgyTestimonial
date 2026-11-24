@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <base target="_top">
   <title>Admin Moderation & Analytics Dashboard | Testimonial Hub</title>
 
   <!-- Google Fonts & Icons -->
@@ -85,7 +86,7 @@
     <!-- Left: Brand & Navigation Links -->
     <div class="flex items-center gap-8">
       <div class="flex items-center gap-3">
-        <a href="?page=form" class="flex items-center gap-3">
+        <a href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=form' : '?page=form' ?>" target="_top" class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
             <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
           </div>
@@ -99,15 +100,15 @@
 
       <!-- Navigation Tabs -->
       <nav class="hidden md:flex items-center gap-1">
-        <a class="px-3.5 py-1.5 rounded-lg text-on-surface-variant text-sm hover:text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2" href="?page=form">
+        <a class="px-3.5 py-1.5 rounded-lg text-on-surface-variant text-sm hover:text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2" href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=form' : '?page=form' ?>" target="_top">
           <span class="material-symbols-outlined text-[18px]">rate_review</span>
           <span>Submit Praise</span>
         </a>
-        <a class="px-3.5 py-1.5 rounded-lg text-on-surface-variant text-sm hover:text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2" href="?page=wall">
+        <a class="px-3.5 py-1.5 rounded-lg text-on-surface-variant text-sm hover:text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2" href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=wall' : '?page=wall' ?>" target="_top">
           <span class="material-symbols-outlined text-[18px]">favorite</span>
           <span>Wall of Love</span>
         </a>
-        <a class="px-3.5 py-1.5 rounded-lg bg-surface-container text-primary text-sm font-semibold transition-colors flex items-center gap-2" href="?page=admin">
+        <a class="px-3.5 py-1.5 rounded-lg bg-surface-container text-primary text-sm font-semibold transition-colors flex items-center gap-2" href="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl + '?page=admin' : '?page=admin' ?>" target="_top">
           <span class="material-symbols-outlined text-[18px]">dashboard</span>
           <span>Admin Dashboard</span>
         </a>

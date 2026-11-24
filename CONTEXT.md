@@ -1,10 +1,10 @@
 # Testimonial Hub - System Context & Operational Architecture
 
-> **Document Version:** 1.1.0  
-> **Last Updated:** November 23, 2026, 23:47  
+> **Document Version:** 1.2.0  
+> **Last Updated:** November 23, 2026, 23:58  
 > **Status:** Production-Ready / Pushed to Google Apps Script & GitHub  
 > **Repository:** `https://github.com/NelvirJAN/AgyTestimonial.git` (`main`)  
-> **Latest Git Commit:** `9fea54e` (*"Add CONTEXT.md covering architecture, data models, and system status"*)  
+> **Latest Git Commit:** `a2f8c83` (*"Add /saveProgress and /pushAll agent skills and update CONTEXT.md"*)  
 > **Apps Script ID:** `19wXYaiigS78Ce6b5xVLyGf4Dm-9PL0V3yGvaCM8K6Zroc9fDpUZGWg66`
 
 ---
@@ -20,6 +20,7 @@
 4. **Data Privacy Risk:** Protects customer data by strictly ensuring submitter email addresses are accessible only in the protected admin dashboard and completely omitted from public Wall of Love endpoints and client-rendered HTML.
 5. **Frictionless Moderation & Display:** Empowers the workspace owner to approve or edit AI quotes in one click and immediately stream updates to responsive, embeddable Wall of Love galleries.
 6. **Session & Architecture Continuity:** Enforces persistent session context tracking via [`CONTEXT.md`](file:///c:/AntiGravity/AgyTestimonials/CONTEXT.md) and the dedicated [`save-progress`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/save-progress/SKILL.md) skill.
+7. **Safe Two-Tier Deployment:** Guarantees deployment safety via [`push-all`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/push-all/SKILL.md), halting on Apps Script errors before any Git changes are committed.
 
 ---
 
@@ -40,8 +41,9 @@ The project is fully built, tested, pushed to Google Apps Script via Clasp, and 
 | [`.claspignore`](file:///c:/AntiGravity/AgyTestimonials/.claspignore) | Config | Tooling | Whitelists only deployable Apps Script files (`appsscript.json`, `Code.js`, `*.html`). |
 | [`README.md`](file:///c:/AntiGravity/AgyTestimonials/README.md) | Docs | ~180 lines | Comprehensive non-technical setup guide covering Drive, Gemini API, Google Chat, and deployment steps. |
 | [`Spec.md`](file:///c:/AntiGravity/AgyTestimonials/Spec.md) | Docs | 58 lines | Original business logic and architectural constraints reference specification. |
-| [`.agents/skills/save-progress/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/save-progress/SKILL.md) | Agent Customization | ~70 lines | Standard Antigravity agent discovery route for the `/saveProgress` skill. Instructs agents to review session history and update `CONTEXT.md`. |
+| [`.agents/skills/save-progress/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/save-progress/SKILL.md) | Agent Customization | ~70 lines | Standard Antigravity agent discovery route for `/saveProgress`. Instructs agents to review session history and update `CONTEXT.md`. |
 | [`skills/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/skills/SKILL.md) | Agent Customization | ~70 lines | Root discovery route mirror for the `/saveProgress` skill. |
+| [`.agents/skills/push-all/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/push-all/SKILL.md) | Agent Customization | ~80 lines | Standard Antigravity agent discovery route for `/pushAll`. Executes sequential deployment to Apps Script (via Clasp) and Git/GitHub with a strict circuit breaker. |
 
 ---
 
@@ -83,7 +85,24 @@ Incoming HTTP GET requests to the Web App are handled dynamically:
 
 ---
 
-## 4. Data Models, Schemas & Secrets
+## 4. Custom Agent Skills
+
+The workspace includes two dedicated Antigravity slash-command skills:
+
+### 1. `/saveProgress` (`save-progress`)
+- **Location:** [`.agents/skills/save-progress/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/save-progress/SKILL.md)
+- **Role:** Reviews the current conversation turn, inspects git status and history, and updates [`CONTEXT.md`](file:///c:/AntiGravity/AgyTestimonials/CONTEXT.md) with updated timestamps, versioning, modified files, architectural decisions, and next steps.
+
+### 2. `/pushAll` (`push-all`)
+- **Location:** [`.agents/skills/push-all/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/push-all/SKILL.md)
+- **Role:** Coordinates a sequential deployment runbook:
+  1. Explains each command in plain English before running.
+  2. Runs `clasp push` first. If any error occurs, **halts immediately** and reports the failure without touching Git.
+  3. Only upon Clasp success, stages files (`git add .`), commits (`git commit`), and pushes to GitHub (`git push origin main`).
+
+---
+
+## 5. Data Models, Schemas & Secrets
 
 ### Google Sheets Database Schema (`Testimonials` Tab)
 
@@ -113,41 +132,6 @@ PropertiesService.getScriptProperties()
 | `GEMINI_API_KEY` | Secret | **Yes** | Authenticates calls to Google AI Studio for Gemini 1.5 Flash structured quote/tag generation. |
 | `DRIVE_FOLDER_ID` | Internal ID | **Yes** | Target Google Drive folder where base64 headshots are decoded, saved, and given public link permissions. |
 | `CHAT_WEBHOOK_URL` | Secret URL | Optional | Webhook URL for Google Chat space to post real-time submission notifications. |
-
----
-
-## 5. Component Deep Dive
-
-### 1. Submission Form (`Form.html`)
-- **Visual Design:** Faithfully implements the Google Stitch desktop & mobile layouts using Tailwind CSS, Inter, and Plus Jakarta Sans.
-- **Client-Side Optimization:**
-  - File picker + drag-and-drop circular avatar container.
-  - HTML5 `<canvas>` center-crops and compresses image to max 400×400px JPEG (~40–60KB).
-  - Eliminates transmission lag and prevents Apps Script 50MB payload limits.
-- **Dynamic UX:**
-  - Interactive 5-star selector with hover/click feedback.
-  - Live character counter (0 / 600 characters).
-  - Real-time aside preview updating name, organization, quote, and avatar on keystroke.
-  - Form validation with animated loading states and celebratory Thank You view.
-
-### 2. Admin Dashboard (`Admin.html`)
-- **Key Metrics:** 4 real-time KPI cards reflecting sheet stats (Total, Average Rating, Pending, Live on Wall).
-- **Analytics:**
-  - Chart.js horizontal/vertical bar chart visualizing 1★ to 5★ distributions.
-  - Dynamic topic theme progress bars derived from AI tags across submissions.
-- **Moderation Queue:**
-  - Tabbed interface (`Pending`, `Approved`, `Rejected`) with live count badges.
-  - Multi-parameter search (name, email, company, quote, tags) and rating/sort filters.
-  - In-place editing: Best quotes can be tweaked and saved directly to the Sheet.
-  - Interactive tag management (add new tag via prompt, remove existing tag).
-  - One-click status transitions (**Approve to Wall**, **Reject**, **Move to Pending**).
-  - Floating toast notifications.
-
-### 3. Embeddable Wall of Love (`Wall.html`)
-- **Social Proof Hero:** Aggregate rating badge (e.g. `4.9/5 from 42 verified reviews`) and customer avatar cluster.
-- **Dynamic Topic Filtering:** Automatically extracts all unique tags present across approved testimonials and generates interactive pill buttons ("All Reviews", "Time-Saving", "Google Sheets", etc.).
-- **Card Grid:** Clean, responsive 3-column card grid highlighting the bold AI quote, star rating, verified customer badge, review copy, and author info.
-- **Embed Dock:** Persistent bottom bar with a single-click **"Copy Embed Code"** button that copies a ready-to-use `<iframe>` snippet pointing to the active wall.
 
 ---
 
@@ -187,13 +171,3 @@ PropertiesService.getScriptProperties()
   - Form: `https://script.google.com/macros/s/<DEPLOYMENT_ID>/exec`
   - Admin: `https://script.google.com/macros/s/<DEPLOYMENT_ID>/exec?page=admin`
   - Wall: `https://script.google.com/macros/s/<DEPLOYMENT_ID>/exec?page=wall`
-
----
-
-## 8. Maintenance & Next Steps
-
-1. **Commit Customizations:** Commit the newly created [`.agents/skills/save-progress/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/.agents/skills/save-progress/SKILL.md) and [`skills/SKILL.md`](file:///c:/AntiGravity/AgyTestimonials/skills/SKILL.md) to GitHub.
-2. **Cloud Project Verification:** Run `initSetup()` in Google Apps Script and verify that `DRIVE_FOLDER_ID` and `GEMINI_API_KEY` are operational.
-3. **Future Extensibility:**
-   - Custom URL parameters on the Wall (e.g. `?page=wall&theme=dark`).
-   - Video testimonial support (Drive video uploads or Loom embeds).

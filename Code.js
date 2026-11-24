@@ -53,24 +53,34 @@ function getAppConfig() {
  *  - default     : Serves Form.html
  */
 function doGet(e) {
-  const page = (e && e.parameter && e.parameter.page) ? e.parameter.page.toLowerCase() : 'form';
+  try {
+    const page = (e && e.parameter && e.parameter.page) ? e.parameter.page.toLowerCase() : 'form';
 
-  let templateName = 'Form';
-  let title = 'Share Your Feedback | Testimonial Hub';
+    let templateName = 'Form';
+    let title = 'Share Your Feedback | Testimonial Hub';
 
-  if (page === 'admin') {
-    templateName = 'Admin';
-    title = 'Admin Moderation & Analytics Dashboard';
-  } else if (page === 'wall') {
-    templateName = 'Wall';
-    title = 'Wall of Love | Customer Stories';
+    if (page === 'admin') {
+      templateName = 'Admin';
+      title = 'Admin Moderation & Analytics Dashboard';
+    } else if (page === 'wall') {
+      templateName = 'Wall';
+      title = 'Wall of Love | Customer Stories';
+    }
+
+    const template = HtmlService.createTemplateFromFile(templateName);
+    try {
+      template.scriptUrl = ScriptApp.getService().getUrl();
+    } catch (err) {
+      template.scriptUrl = '';
+    }
+    return template.evaluate()
+      .setTitle(title)
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } catch (err) {
+    Logger.log('Error in doGet: ' + err.toString());
+    return HtmlService.createHtmlOutput('<!DOCTYPE html><html><head><title>Error</title></head><body><h2>Error loading page</h2><p>' + err.message + '</p><pre>' + (err.stack || '') + '</pre></body></html>');
   }
-
-  const template = HtmlService.createTemplateFromFile(templateName);
-  return template.evaluate()
-    .setTitle(title)
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 /**
