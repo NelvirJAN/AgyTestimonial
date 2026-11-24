@@ -247,124 +247,112 @@
 
   </main>
 
-  <!-- Server-Injected Testimonials Data -->
-  <script id="serverTestimonialsData" type="application/json">
-<?!= JSON.stringify((typeof testimonials !== 'undefined' && testimonials) ? testimonials : []) ?>
-  </script>
-
-  <!-- Desktop Bottom Dock: Copy Embed Code (Disabled per user request) -->
-  <!--
-  <footer
-    class="fixed bottom-0 inset-x-0 z-40 bg-surface/95 backdrop-blur-xl border-t border-surface-container-high shadow-[0_-8px_30px_rgba(11,28,48,0.06)] py-3 px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div
-          class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-on-primary text-sm font-bold shadow-sm">
-          ⚡
-        </div>
-        <div class="flex flex-col">
-          <div class="flex items-center gap-2">
-            <span class="font-headline text-sm font-bold text-on-surface">Embed This Wall of Love</span>
-            <span
-              class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-tertiary-fixed text-on-tertiary-fixed font-semibold">
-              Live Auto-Sync
-            </span>
-          </div>
-          <span class="text-xs text-on-surface-variant">Add real-time customer proof to your website, Notion, or landing pages</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-3 w-full sm:w-auto">
-        <button
-          class="flex-1 sm:flex-initial flex items-center justify-center gap-2 py-2.5 px-6 rounded-xl bg-primary text-on-primary text-xs font-semibold shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] cursor-pointer"
-          data-base-url="<?= (typeof scriptUrl !== 'undefined' && scriptUrl) ? scriptUrl : '' ?>"
-          id="copyEmbedBtn" type="button">
-          <span class="material-symbols-outlined text-[18px]">code</span>
-          <span id="copyBtnText">&lt;/&gt; Copy Embed Code</span>
-        </button>
-      </div>
-    </div>
-  </footer>
-
-  <div
-    class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-5 py-3 rounded-full shadow-2xl flex items-center gap-2.5 text-xs font-medium transition-all duration-300 opacity-0 pointer-events-none z-50 translate-y-2"
-    id="embedToast">
-    <span class="material-symbols-outlined text-tertiary-fixed text-[20px]">task_alt</span>
-    <span>Embed code copied to clipboard!</span>
-  </div>
-  -->
-
-  <!-- Client-Side Gallery Logic -->
+  <!-- Client-Side Gallery Logic (Aligned with Admin Dashboard) -->
   <script>
     let approvedTestimonials = [];
     let activeTag = 'all';
+    let dataLoaded = false;
 
-    function initGallery() {
-      try {
-        const rawEl = document.getElementById('serverTestimonialsData');
-        if (rawEl && rawEl.textContent.trim()) {
-          const parsed = JSON.parse(rawEl.textContent);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            approvedTestimonials = parsed;
-          }
-        }
-      } catch (err) {
-        console.warn('Could not parse server testimonials data:', err);
-      }
+    // Initialize exactly like Admin Dashboard
+    document.addEventListener('DOMContentLoaded', () => {
+      loadWallData();
+    });
 
-      // If testimonials are provided from the server, render immediately
-      if (approvedTestimonials && approvedTestimonials.length > 0) {
-        renderGallery(approvedTestimonials);
-        return;
-      }
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      loadWallData();
+    }
 
-      // Fallback: Query google.script.run if server data was empty
+    function loadWallData() {
+      if (dataLoaded) return;
+
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
-          .withSuccessHandler(renderGallery)
-          .withFailureHandler(onGalleryError)
-          .getWallTestimonials();
+          .withSuccessHandler(onDataLoaded)
+          .withFailureHandler(onDataLoadError)
+          .getAdminData();
       } else {
-        // Mock fallback if running in standalone local preview
-        renderGallery([
-          {
-            id: 'TEST-001',
-            timestamp: '2026-11-23',
-            name: 'Sarah Lin',
-            organization: 'HyperScale',
-            rating: 5,
-            testimonial: 'Automated collection workflows were an instant upgrade for our marketing sprint. Our users simply click our link, type their praise, and Testimonial Hub categorizes everything automatically with zero friction.',
-            bestQuote: 'Cut our testimonial collection time by 80%!',
-            tags: ['Time-Saving', 'AI Tools'],
-            headshotUrl: ''
-          },
-          {
-            id: 'TEST-002',
-            timestamp: '2026-11-22',
-            name: 'Marcus Vance',
-            organization: 'LaunchPad',
-            rating: 5,
-            testimonial: 'We embedded Testimonial Hub right below our checkout pricing table. Prospects can actually see authentic stories from real builders who launched successfully. Setup took less than three minutes!',
-            bestQuote: 'Our conversion rate jumped 24% after embedding this wall.',
-            tags: ['Beginner-Friendly'],
-            headshotUrl: ''
-          },
-          {
-            id: 'TEST-003',
-            timestamp: '2026-11-21',
-            name: 'Priya Sharma',
-            organization: 'CloudSync',
-            rating: 5,
-            testimonial: 'All our NPS responses stream directly from Testimonial Hub right into our shared operational spreadsheet. Our product team tags feature requests in seconds, while the best quotes auto-publish right to the public Wall of Love.',
-            bestQuote: 'The one-click Google Sheets sync is pure magic.',
-            tags: ['Google Sheets', 'Time-Saving'],
-            headshotUrl: ''
-          }
-        ]);
+        // Fallback mock data for local testing
+        setTimeout(() => {
+          onDataLoaded({
+            testimonials: [
+              {
+                id: 'TEST-001',
+                timestamp: '2026-11-23',
+                name: 'Sarah Lin',
+                organization: 'HyperScale',
+                rating: 5,
+                testimonial: 'Automated collection workflows were an instant upgrade for our marketing sprint. Our users simply click our link, type their praise, and Testimonial Hub categorizes everything automatically with zero friction.',
+                bestQuote: 'Cut our testimonial collection time by 80%!',
+                tags: 'Time-Saving, AI Tools',
+                status: 'Approved',
+                headshotUrl: ''
+              },
+              {
+                id: 'TEST-002',
+                timestamp: '2026-11-22',
+                name: 'Marcus Vance',
+                organization: 'LaunchPad',
+                rating: 5,
+                testimonial: 'We embedded Testimonial Hub right below our checkout pricing table. Prospects can actually see authentic stories from real builders who launched successfully. Setup took less than three minutes!',
+                bestQuote: 'Our conversion rate jumped 24% after embedding this wall.',
+                tags: 'Beginner-Friendly',
+                status: 'Approved',
+                headshotUrl: ''
+              },
+              {
+                id: 'TEST-003',
+                timestamp: '2026-11-21',
+                name: 'Priya Sharma',
+                organization: 'CloudSync',
+                rating: 5,
+                testimonial: 'All our NPS responses stream directly from Testimonial Hub right into our shared operational spreadsheet. Our product team tags feature requests in seconds, while the best quotes auto-publish right to the public Wall of Love.',
+                bestQuote: 'The one-click Google Sheets sync is pure magic.',
+                tags: 'Google Sheets, Time-Saving',
+                status: 'Approved',
+                headshotUrl: ''
+              }
+            ]
+          });
+        }, 300);
       }
     }
 
-    function renderGallery(testimonials) {
-      approvedTestimonials = Array.isArray(testimonials) ? testimonials : [];
+    function onDataLoaded(data) {
+      dataLoaded = true;
+      console.log('Testimonials received from getAdminData:', data);
+      const allItems = (data && data.testimonials) || [];
+      
+      // Filter for approved testimonials; if none explicitly marked approved, show all available
+      const approvedOnly = allItems.filter(item => String(item.status || '').toLowerCase() === 'approved');
+      approvedTestimonials = approvedOnly.length > 0 ? approvedOnly : allItems;
+
+      renderGallery(approvedTestimonials);
+    }
+
+    function onDataLoadError(err) {
+      console.error('Error loading wall data:', err);
+      const feed = document.getElementById('testimonialFeed');
+      if (feed) {
+        feed.innerHTML = `
+          <div class="col-span-full py-12 text-center text-error bg-surface-container-lowest rounded-2xl border border-error/20 p-8 max-w-lg mx-auto shadow-sm">
+            <p class="font-bold">Failed to load customer stories</p>
+            <p class="text-xs mt-1 text-on-surface-variant">${escapeHtml(err && (err.message || err.toString()) || 'Unknown error')}</p>
+            <button onclick="dataLoaded = false; loadWallData()" class="mt-4 px-5 py-2 bg-primary text-on-primary rounded-full text-xs font-semibold cursor-pointer shadow-sm hover:opacity-95">Retry</button>
+          </div>
+        `;
+      }
+    }
+
+    function getTagsArray(tags) {
+      if (Array.isArray(tags)) return tags;
+      if (typeof tags === 'string' && tags.trim()) {
+        return tags.split(',').map(t => t.trim()).filter(Boolean);
+      }
+      return [];
+    }
+
+    function renderGallery(items) {
+      approvedTestimonials = items || [];
       const total = approvedTestimonials.length;
 
       const allCountEl = document.getElementById('allCount');
@@ -423,12 +411,8 @@
 
       const uniqueTags = new Set();
       (items || []).forEach(item => {
-        if (Array.isArray(item.tags)) {
-          item.tags.forEach(t => {
-            const clean = String(t).trim();
-            if (clean) uniqueTags.add(clean);
-          });
-        }
+        const tags = getTagsArray(item.tags);
+        tags.forEach(t => uniqueTags.add(t));
       });
 
       let html = `
@@ -443,7 +427,7 @@
       `;
 
       uniqueTags.forEach(tag => {
-        const count = items.filter(it => Array.isArray(it.tags) && it.tags.includes(tag)).length;
+        const count = items.filter(it => getTagsArray(it.tags).includes(tag)).length;
         const isSelected = activeTag === tag;
         html += `
           <button 
@@ -477,7 +461,6 @@
 
       if (!feed) return;
 
-      // Case 1: Database has zero testimonials
       if (!approvedTestimonials || approvedTestimonials.length === 0) {
         feed.innerHTML = '';
         if (filterEmpty) {
@@ -498,10 +481,10 @@
 
       const filtered = approvedTestimonials.filter(item => {
         if (activeTag === 'all') return true;
-        return Array.isArray(item.tags) && item.tags.includes(activeTag);
+        const tags = getTagsArray(item.tags);
+        return tags.includes(activeTag);
       });
 
-      // Case 2: Specific topic filter returns zero results
       if (filtered.length === 0) {
         feed.innerHTML = '';
         if (filterEmpty) {
@@ -520,8 +503,9 @@
         const rating = Number(item.rating) || 5;
         const starsHtml = '★'.repeat(rating) + '☆'.repeat(Math.max(0, 5 - rating));
         const avatarSrc = item.headshotUrl || 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/account_circle/default/48px.svg';
+        const tags = getTagsArray(item.tags);
 
-        const tagsHtml = (item.tags || []).map(tag => `
+        const tagsHtml = tags.map(tag => `
           <span class="px-2.5 py-1 rounded-full bg-surface-container-high/80 text-on-surface text-xs font-medium">
             ${escapeHtml(tag)}
           </span>
@@ -534,7 +518,6 @@
         return `
           <article class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-surface-container-high/70 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between">
             <div>
-              <!-- Header with stars & verified badge -->
               <div class="flex items-center justify-between gap-2 mb-4">
                 <div class="flex items-center text-secondary-container text-base tracking-widest">
                   ${starsHtml}
@@ -545,23 +528,20 @@
                 </span>
               </div>
 
-              <!-- Bold Highlighted Pull-Quote -->
               <blockquote class="font-headline text-base sm:text-lg font-bold text-on-surface tracking-tight mb-3">
                 ${quoteHeadline}
               </blockquote>
 
-              <!-- Full Review Copy -->
               <p class="text-sm text-on-surface-variant leading-relaxed mb-5">
                 ${escapeHtml(item.testimonial || '')}
               </p>
 
-              <!-- Topic Chips -->
               <div class="flex flex-wrap items-center gap-2 mb-6">
                 ${tagsHtml}
               </div>
             </div>
 
-            <!-- Author Footer (Strict privacy: NO email) -->
+            <!-- Author Footer (NO EMAIL for strict privacy) -->
             <div class="flex items-center gap-3.5 pt-4 border-t border-surface-container-high/60">
               <img class="w-11 h-11 rounded-full object-cover shadow-sm ring-1 ring-surface-container-highest bg-surface-container" alt="${escapeHtml(item.name || 'Customer')}" src="${avatarSrc}">
               <div class="flex flex-col min-w-0">
@@ -577,18 +557,6 @@
       }).join('');
     }
 
-    function onGalleryError(err) {
-      console.error('Error loading testimonials:', err);
-      const feed = document.getElementById('testimonialFeed');
-      if (!feed) return;
-      feed.innerHTML = `
-        <div class="col-span-full py-12 text-center text-error">
-          <p class="font-semibold">Unable to load testimonials.</p>
-          <p class="text-xs mt-1">${escapeHtml(err && (err.message || err.toString()) || '')}</p>
-        </div>
-      `;
-    }
-
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
@@ -598,9 +566,6 @@
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
     }
-
-    // Execute immediately on parse
-    initGallery();
   </script>
 </body>
 
