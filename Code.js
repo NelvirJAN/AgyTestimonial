@@ -36,7 +36,7 @@ function getAppConfig() {
   const props = PropertiesService.getScriptProperties().getProperties();
   return {
     geminiApiKey: props['GEMINI_API_KEY'] || '',
-    chatWebhookUrl: props['CHAT_WEBHOOK_URL'] || '',
+    chatWebhookUrl: props['CHAT_WEBHOOK_URL'] || props['SLACK_WEBHOOK_URL'] || '',
     driveFolderId: props['DRIVE_FOLDER_ID'] || ''
   };
 }
@@ -181,9 +181,9 @@ function submitTestimonial(data) {
       headshotUrl
     ]);
 
-    // 4. Send Google Chat Notification
+    // 4. Send Webhook Notification (Slack, Google Chat, etc.)
     if (config.chatWebhookUrl) {
-      sendGoogleChatNotification({
+      sendNotification({
         id: id,
         name: data.name.trim(),
         organization: (data.organization || '').trim(),
@@ -316,66 +316,138 @@ Respond ONLY with valid, raw JSON matching this schema:
 }
 
 /**
- * Dispatches a rich formatted card to Google Chat Webhook
+ * Dispatches a formatted notification card to Slack, Google Chat, or generic webhook
  */
-function sendGoogleChatNotification(data) {
+function sendNotification(data) {
   try {
+    const webhookUrl = (data.webhookUrl || '').trim();
+    if (!webhookUrl) return;
+
     const stars = '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating);
     const orgText = data.organization ? ` (${data.organization})` : '';
+    const quoteText = data.bestQuote ? `"${data.bestQuote}"` : '';
+    const tagsText = data.tags && data.tags.length ? data.tags.join(', ') : 'None';
 
-    const cardPayload = {
-      cardsV2: [
-        {
-          cardId: 'new-testimonial-card',
-          card: {
-            header: {
-              title: '⭐ New Testimonial Submitted!',
-              subtitle: `${data.name}${orgText} • ${stars}`,
-              imageUrl: data.headshotUrl || 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/reviews/default/48px.svg',
-              imageType: 'CIRCLE'
+    let payload = null;
+
+    // 1. Slack Webhook (hooks.slack.com)
+    if (webhookUrl.indexOf('slack.com') !== -1) {
+      payload = {
+        text: `⭐ *New Testimonial Submitted!* from *${data.name}*${orgText} (${stars})`,
+        blocks: [
+          {
+            type: "header",
+            text: {
+              type: "plain_text",
+              text: "⭐ New Testimonial Submitted!",
+              emoji: true
+            }
+          },
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `*Reviewer:* *${data.name}*${orgText}\n*Rating:* ${stars} (${data.rating}/5)\n${quoteText ? `*AI Highlight:* _${quoteText}_\n` : ''}*Tags:* \`${tagsText}\``
             },
-            sections: [
+            ...(data.headshotUrl ? {
+              accessory: {
+                type: "image",
+                image_url: data.headshotUrl,
+                alt_text: data.name
+              }
+            } : {})
+          },
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `*Full Testimonial:*\n>${data.testimonial.split('\n').join('\n>')}`
+            }
+          },
+          {
+            type: "context",
+            elements: [
               {
-                header: 'AI Extracted Best Quote',
-                widgets: [
-                  {
-                    textParagraph: {
-                      text: `<b>"${data.bestQuote}"</b>`
-                    }
-                  }
-                ]
-              },
-              {
-                header: 'Full Submission',
-                collapsible: true,
-                uncollapsibleWidgetsCount: 1,
-                widgets: [
-                  {
-                    textParagraph: {
-                      text: data.testimonial
-                    }
-                  },
-                  {
-                    textParagraph: {
-                      text: `<b>Tags:</b> ${data.tags.join(', ') || 'None'}`
-                    }
-                  }
-                ]
+                type: "mrkdwn",
+                text: `*ID:* \`${data.id}\` • Stored in Google Sheets • Status: *Pending Moderation*`
               }
             ]
           }
-        }
-      ]
-    };
+        ]
+      };
+    } 
+    // 2. Google Chat Webhook (chat.googleapis.com)
+    else if (webhookUrl.indexOf('chat.googleapis.com') !== -1) {
+      payload = {
+        cardsV2: [
+          {
+            cardId: 'new-testimonial-card',
+            card: {
+              header: {
+                title: '⭐ New Testimonial Submitted!',
+                subtitle: `${data.name}${orgText} • ${stars}`,
+                imageUrl: data.headshotUrl || 'https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/reviews/default/48px.svg',
+                imageType: 'CIRCLE'
+              },
+              sections: [
+                {
+                  header: 'AI Extracted Best Quote',
+                  widgets: [
+                    {
+                      textParagraph: {
+                        text: `<b>"${data.bestQuote || data.testimonial.slice(0, 100)}"</b>`
+                      }
+                    }
+                  ]
+                },
+                {
+                  header: 'Full Submission',
+                  collapsible: true,
+                  uncollapsibleWidgetsCount: 1,
+                  widgets: [
+                    {
+                      textParagraph: {
+                        text: data.testimonial
+                      }
+                    },
+                    {
+                      textParagraph: {
+                        text: `<b>Tags:</b> ${tagsText}`
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      };
+    } 
+    // 3. Generic / Discord / Fallback
+    else {
+      payload = {
+        text: `⭐ *New Testimonial Submitted!*\n*Reviewer:* ${data.name}${orgText}\n*Rating:* ${stars} (${data.rating}/5)\n*AI Highlight:* ${quoteText}\n*Testimonial:* ${data.testimonial}\n*Tags:* ${tagsText}`
+      };
+    }
 
-    UrlFetchApp.fetch(data.webhookUrl, {
+    const options = {
       method: 'post',
       contentType: 'application/json',
-      payload: JSON.stringify(cardPayload),
+      payload: JSON.stringify(payload),
       muteHttpExceptions: true
-    });
+    };
+
+    const response = UrlFetchApp.fetch(webhookUrl, options);
+    const code = response.getResponseCode();
+    const respText = response.getContentText();
+
+    if (code >= 200 && code < 300) {
+      Logger.log(`Webhook notification dispatched successfully (HTTP ${code})`);
+    } else {
+      Logger.log(`Webhook failed with status ${code}: ${respText}`);
+    }
   } catch (err) {
-    Logger.log('Google Chat Webhook dispatch failed: ' + err.toString());
+    Logger.log('Webhook notification dispatch error: ' + err.toString());
   }
 }
 
@@ -566,6 +638,7 @@ function initSetup() {
   Logger.log('Sheet initialized: ' + sheet.getName());
   Logger.log('GEMINI_API_KEY set: ' + (config.geminiApiKey ? 'YES' : 'NO (Required for AI quote & tags)'));
   Logger.log('DRIVE_FOLDER_ID set: ' + (config.driveFolderId ? 'YES' : 'NO (Required for headshot uploads)'));
-  Logger.log('CHAT_WEBHOOK_URL set: ' + (config.chatWebhookUrl ? 'YES' : 'NO (Optional for notifications)'));
+  const webhookDesc = config.chatWebhookUrl ? (config.chatWebhookUrl.indexOf('slack.com') !== -1 ? 'YES (Slack Webhook detected)' : 'YES (Google Chat Webhook detected)') : 'NO (Optional for notifications)';
+  Logger.log('CHAT/SLACK WEBHOOK set: ' + webhookDesc);
   Logger.log('======================================');
 }
