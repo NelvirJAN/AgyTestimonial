@@ -74,7 +74,7 @@ function doGet(e) {
       template.scriptUrl = '';
     }
     if (page === 'wall') {
-      template.testimonials = getWallTestimonials();
+      template.testimonials = getApprovedTestimonials();
     }
     return template.evaluate()
       .setTitle(title)
