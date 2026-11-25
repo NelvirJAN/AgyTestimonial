@@ -327,6 +327,7 @@ function sendNotification(data) {
     if (!webhookUrl) return;
 
     const stars = '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating);
+    const slackStars = '⭐'.repeat(data.rating) + '☆'.repeat(5 - data.rating);
     const orgText = data.organization ? ` (${data.organization})` : '';
     const quoteText = data.bestQuote ? `"${data.bestQuote}"` : '';
     const tagsText = data.tags && data.tags.length ? data.tags.join(', ') : 'None';
@@ -346,7 +347,7 @@ function sendNotification(data) {
     // 1. Slack Webhook (hooks.slack.com)
     if (webhookUrl.indexOf('slack.com') !== -1) {
       payload = {
-        text: `⭐ *New Testimonial Submitted!* from *${data.name}*${orgText} (${stars})`,
+        text: `⭐ *New Testimonial Submitted!* from *${data.name}*${orgText} (${slackStars})`,
         blocks: [
           {
             type: "header",
@@ -360,7 +361,7 @@ function sendNotification(data) {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `*Reviewer:* *${data.name}*${orgText}\n*Rating:* ${stars} (${data.rating}/5)\n${quoteText ? `*AI Highlight:* _${quoteText}_\n` : ''}*Tags:* \`${tagsText}\``
+              text: `*Reviewer:* *${data.name}*${orgText}\n*Rating:* ${slackStars} (${data.rating}/5)\n${quoteText ? `*AI Highlight:* _${quoteText}_\n` : ''}*Tags:* \`${tagsText}\``
             },
             ...(data.headshotUrl ? {
               accessory: {
