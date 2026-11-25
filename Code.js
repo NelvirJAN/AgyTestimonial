@@ -331,6 +331,16 @@ function sendNotification(data) {
     const quoteText = data.bestQuote ? `"${data.bestQuote}"` : '';
     const tagsText = data.tags && data.tags.length ? data.tags.join(', ') : 'None';
 
+    let adminUrl = '';
+    try {
+      const baseUrl = ScriptApp.getService().getUrl();
+      if (baseUrl) {
+        adminUrl = `${baseUrl}?page=admin`;
+      }
+    } catch (e) {
+      adminUrl = '';
+    }
+
     let payload = null;
 
     // 1. Slack Webhook (hooks.slack.com)
@@ -375,7 +385,22 @@ function sendNotification(data) {
                 text: `*ID:* \`${data.id}\` • Stored in Google Sheets • Status: *Pending Moderation*`
               }
             ]
-          }
+          },
+          ...(adminUrl ? [{
+            type: "actions",
+            elements: [
+              {
+                type: "button",
+                text: {
+                  type: "plain_text",
+                  text: "Review & Approve",
+                  emoji: true
+                },
+                style: "primary",
+                url: adminUrl
+              }
+            ]
+          }] : [])
         ]
       };
     } 
